@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => (
   <header className="bg-white shadow-md p-4 w-1/2 rounded-md flex items-center justify-between relative z-10">
-<Link to='/' className="group">
+    <Link to='/' className="group">
       <h1 className="text-4xl font-extrabold relative">
         <span className="inline-block transform hover:scale-150 transition-transform duration-300 text-orange-500 ">B</span>
         <span className="inline-block transform hover:rotate-180 transition-transform duration-300 text-orange-600 ">U</span>

@@ -10,11 +10,12 @@ export default function Component() {
   useEffect(() => {
     const emojis = ['😀', '😎', '🤪', '🥳', '🚀', '🌈', '🍕', '🎉', '🦄', '🐶', '🌟', '🎸']
     const newBackgroundEmojis = []
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 5000; i++) {
       newBackgroundEmojis.push(emojis[Math.floor(Math.random() * emojis.length)])
     }
     setBackgroundEmojis(newBackgroundEmojis)
   }, [])
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 0) {
