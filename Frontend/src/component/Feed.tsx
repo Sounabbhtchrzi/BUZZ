@@ -1,12 +1,45 @@
 // import React from 'react';
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Tabs from "./Tab";
+import axios from "axios";
 
 const Feed = () => {
-  const [postText, setPostText] = useState("")
+  const [postText, setPostText] = useState("");
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/posts'); // Adjust the endpoint as necessary
+            console.log(response.data);
+        } catch (err) {
+            console.error('Error fetching posts:', err);
+            console.log('Failed to fetch posts');
+        } 
+    };
+
+    fetchPosts();
+}, []);
+
+  const createPost = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:5000/api/posts/create',  {content: postText }, { withCredentials: true });
+      if (response.status === 201) {
+        console.log(response.data);
+        setPostText('');  
+      } else {
+        console.log('Failed to create post.');
+      }
+    } catch (err) {
+      console.log('Error occurred while creating post.');
+    }
+  };
+
+
   return (
     <main className="w-1/2 space-y-6">
       <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300">
+        <form onSubmit={createPost}>
         <textarea
           placeholder="What's on your funky mind? 🤪"
           className="w-full p-3 h-20 rounded bg-gray-100 border border-orange-300 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none text-lg"
@@ -32,14 +65,12 @@ const Feed = () => {
           </button>
           <button
             className="bg-orange-500 text-white px-6 py-2 rounded-full font-bold text-lg hover:bg-orange-600 transition-colors"
-            onClick={() => {
-              console.log("Posting:", postText)
-              setPostText("")
-            }}
+           
           >
             Post It! 🔥
           </button>
         </div>
+        </form>
       </div>
 
       <Tabs/>
