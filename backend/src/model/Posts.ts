@@ -1,87 +1,67 @@
-import mongoose, { Document, model, Schema, Types } from 'mongoose';
+import mongoose, { Document, model, Schema } from 'mongoose';
 
-
+// Interface for Comment
 interface IComment {
     content: string;
     userId: string; 
     createdAt?: Date;
-  }
-  
+    updatedAt?: Date;  // Add updatedAt for comments
+}
 
-  interface ILike {
+// Interface for Like
+interface ILike {
     userId: string; 
     createdAt?: Date;
-  }
-  
+    updatedAt?: Date;  // Add updatedAt for likes
+}
 
-  interface IPost extends Document {
-    title?: string;
+// Interface for Post
+interface IPost extends Document {
     content: string;
-    image?: string; 
     userId: string; 
     createdAt?: Date;
+    updatedAt?: Date;  // Add updatedAt for posts
     comments: IComment[];
     likes: ILike[];
-  }
-  
-  
-  const commentSchema = new Schema<IComment>({
-    content: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    userId: {
-      type: String,
-      required: true,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-  });
-  
+}
 
-  const likeSchema = new Schema<ILike>({
-    userId: {
-      type: String, 
-      required: true,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-  });
-  
-  
-  const postSchema = new Schema<IPost>({
-    title: {
-      type: String,
-      trim: true,
-    },
+// Comment Schema
+const commentSchema = new Schema<IComment>({
     content: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    image: {
-      type: String, 
-      trim: true,
-      default: null,
+        type: String,
+        required: true,
+        trim: true,
     },
     userId: {
-      type: String, 
-      required: true,
+        type: String,
+        required: true,
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
+}, { timestamps: true }); 
+
+// Like Schema
+const likeSchema = new Schema<ILike>({
+    userId: {
+        type: String, 
+        required: true,
+    },
+}, { timestamps: true }); // Add timestamps option
+
+// Post Schema
+const postSchema = new Schema<IPost>({
+    content: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    userId: {
+        type: String, 
+        required: true,
     },
     comments: [commentSchema], 
     likes: [likeSchema],      
-  });
-  
- 
-  const Post = mongoose.model<IPost>('Post', postSchema);
-  
-  export default Post;
+}, { timestamps: true }); // Add timestamps option
+
+// Create the Post model
+const Post = mongoose.model<IPost>('Post', postSchema);
+
+export default Post;
