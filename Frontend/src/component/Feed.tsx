@@ -62,7 +62,7 @@ const Feed = () => {
 
 
   return (
-    <main className="w-1/2 space-y-6">
+    <main className="lg:w-1/2 w-11/12 space-y-6">
       <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300">
         <form onSubmit={createPost}>
           <textarea
@@ -71,8 +71,8 @@ const Feed = () => {
             value={postText}
             onChange={(e) => setPostText(e.target.value)}
           />
-          <div className="flex justify-between mt-4">
-            <button className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors">
+          <div className="flex justify-center lg:justify-end mt-4 ">
+            {/* <button className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors">
               <span className="text-2xl">📸</span>
               <span>Photo/Video</span>
             </button>
@@ -87,7 +87,7 @@ const Feed = () => {
             <button className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors">
               <span className="text-2xl">😊</span>
               <span>Feelings</span>
-            </button>
+            </button> */}
             <button
               className="bg-orange-500 text-white px-6 py-2 rounded-full font-bold text-lg hover:bg-orange-600 transition-colors"
 
