@@ -9,6 +9,10 @@ import axios from "axios";
 const Feed = () => {
   const [postText, setPostText] = useState("");
   const [posts, setPosts] = useState([]);
+  const [commentText, setCommentText] = useState("");
+  const [activePostId, setActivePostId] = useState<string | null>(null);
+  const [reloadTrigger, setReloadTrigger] = useState(false);
+
 
   const generateAvatarUrl = (seed: string) => {
     return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`;
@@ -27,7 +31,7 @@ const Feed = () => {
     };
 
     fetchPosts();
-  }, []);
+  }, [reloadTrigger]);
 
   const createPost = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -36,6 +40,7 @@ const Feed = () => {
       if (response.status === 201) {
         console.log(response.data);
         setPostText('');
+        setReloadTrigger(!reloadTrigger);
       } else {
         console.log('Failed to create post.');
       }
@@ -53,12 +58,35 @@ const Feed = () => {
         setPosts((prevPosts: any) =>
           prevPosts.map((post: any) => (post._id === updatedPost._id ? updatedPost : post))
         );
+        setReloadTrigger(!reloadTrigger);
       }
     } catch (err) {
       console.error('Error occurred while liking/disliking the post:', err);
     }
   };
 
+  const postComment = async (postId: string) => {
+    if (!commentText.trim()) return;
+
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/posts/comment/${postId}`,
+        { content: commentText },
+        { withCredentials: true }
+      );
+      
+      setActivePostId(null); 
+      setCommentText(''); 
+      console.log(response.data.message);
+      setReloadTrigger(!reloadTrigger);
+    } catch (err) {
+      console.error('Error adding comment:', err);
+    }
+  };
+
+  const handleCommentClick = (postId: string): void => {
+    setActivePostId((prev: string | null) => (prev === postId ? null : postId));
+  };
 
 
   return (
@@ -131,16 +159,33 @@ const Feed = () => {
                 <span className="text-2xl">❤️</span>
                 <span className="font-bold">{post.likes.length} Likes</span>
               </button>
-              <button className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors">
-                <span className="text-2xl">💬</span>
-                <span className="font-bold">7 Comments</span>
+              <button
+              className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors"
+              onClick={() => handleCommentClick(post._id)}
+            >
+              <span className="text-2xl">💬</span>
+              <span className="font-bold">{post.comments.length} Comments</span>
+            </button>
+            </div>
+            {activePostId === post._id && (
+            <div className="mt-4">
+              <textarea
+                className="w-full p-2 border rounded-lg bg-gray-100"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Write a comment..."
+              />
+              <button
+                className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-full font-bold hover:bg-orange-600 transition-colors"
+                onClick={() => postComment(post._id)}
+              >
+                Submit Comment
               </button>
             </div>
+          )}
           </div>
         );
       })}
-
-
 
 
     </main>
