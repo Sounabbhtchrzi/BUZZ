@@ -74,9 +74,9 @@ const Feed = () => {
         { content: commentText },
         { withCredentials: true }
       );
-      
-      setActivePostId(null); 
-      setCommentText(''); 
+
+      setActivePostId(null);
+      setCommentText('');
       console.log(response.data.message);
       setReloadTrigger(!reloadTrigger);
     } catch (err) {
@@ -127,65 +127,99 @@ const Feed = () => {
       </div>
 
       <Tabs />
-      {posts.map((post: any) => {
-        // const avatarUrl = generator.generateRandomAvatar(); // Generate a new random avatar for each post
-
-        return (
-          <div key={post._id} className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300">
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center space-x-3">
-                <img
-                  src={generateAvatarUrl(post._id)} // Use post._id as the seed to generate a unique avatar
-                  alt="User Avatar"
-                  className="w-12 h-12 rounded-full bg-slate-200"
-                />
-                <div>
-                  <h3 className="font-bold text-xl">Sara Andersen</h3>
-                  <p className="text-gray-500">
-                    {new Date(post.createdAt).toLocaleDateString('en-GB')}, {new Date(post.createdAt).toLocaleTimeString('en-GB', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: false,
-                    })}
-                  </p>
-                </div>
+      {posts.map((post: any) => (
+        <div key={post._id} className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center space-x-3">
+              <img
+                src={generateAvatarUrl(post._id)}
+                alt="User Avatar"
+                className="w-12 h-12 rounded-full bg-slate-200"
+              />
+              <div>
+                <h3 className="font-bold text-xl">Sara Andersen</h3>
+                <p className="text-gray-500">
+                  {new Date(post.createdAt).toLocaleDateString('en-GB')}, {new Date(post.createdAt).toLocaleTimeString('en-GB', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                  })}
+                </p>
               </div>
-              <button className="text-orange-500 text-2xl hover:text-orange-600 transition-colors">•••</button>
             </div>
-            <p className="text-xl mb-4">{post.content}🐶✨</p>
+            <button className="text-orange-500 text-2xl hover:text-orange-600 transition-colors">•••</button>
+          </div>
 
-            <div className="mt-4 flex justify-between items-center">
-              <button className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors" onClick={() => handleLike(post._id)} >
-                <span className="text-2xl">❤️</span>
-                <span className="font-bold">{post.likes.length} Likes</span>
-              </button>
-              <button
+          <p className="text-xl mb-4">{post.content}🐶✨</p>
+
+          <div className="mt-4 flex justify-between items-center">
+            <button
+              className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors"
+              onClick={() => handleLike(post._id)}
+            >
+              <span className="text-2xl">❤️</span>
+              <span className="font-bold">{post.likes.length} Likes</span>
+            </button>
+            <button
               className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors"
               onClick={() => handleCommentClick(post._id)}
             >
               <span className="text-2xl">💬</span>
               <span className="font-bold">{post.comments.length} Comments</span>
             </button>
-            </div>
-            {activePostId === post._id && (
-            <div className="mt-4">
+          </div>
+
+          {activePostId === post._id && (
+            <div className="mt-6 bg-orange-50 rounded-lg p-4">
               <textarea
-                className="w-full p-2 border rounded-lg bg-gray-100"
+                className="w-full p-3 border-2 border-orange-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent transition duration-200"
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 placeholder="Write a comment..."
+                rows={3}
               />
               <button
-                className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-full font-bold hover:bg-orange-600 transition-colors"
+                className="mt-2 bg-orange-500 text-white px-6 py-2 rounded-full font-bold hover:bg-orange-600 transition-colors duration-200 shadow-md hover:shadow-lg"
                 onClick={() => postComment(post._id)}
               >
-                Submit Comment
+                Post Comment
               </button>
+
+              <div className="mt-6 space-y-4">
+                {post.comments.map((comment: any) => (
+                  <div key={comment._id} className="bg-white rounded-lg p-4 shadow-sm">
+                    <div className="flex items-start space-x-3">
+                      <img
+                        src={generateAvatarUrl(comment._id)}
+                        alt="Commenter Avatar"
+                        className="w-8 h-8 rounded-full bg-orange-200"
+                      />
+                      <div className="flex-1">
+                        <p className="text-gray-800 font-medium">User</p>
+                        <div className=" flex w-full justify-between ">
+                        <p className="text-gray-600 mt-1 font-semibold">{comment.content}</p>
+                        <p className="text-xs text-gray-400 mt-2">
+                          {new Date(comment.createdAt).toLocaleDateString('en-GB')} at{' '}
+                          {new Date(comment.createdAt).toLocaleTimeString('en-GB', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false,
+                          })}
+                        </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
-          </div>
-        );
-      })}
+        </div>
+      ))}
+
+
+
+
 
 
     </main>
