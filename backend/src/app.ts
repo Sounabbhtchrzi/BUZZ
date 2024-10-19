@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 const corsOptions = {
-  origin: 'http://localhost:5173', // Update this to your frontend's URL
+  origin: `${process.env.VITE_FRONTEND_URL}`, // Update this to your frontend's URL
   credentials: true, // Allow credentials
 };
 app.use(cors(corsOptions));
