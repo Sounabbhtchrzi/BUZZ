@@ -17,12 +17,12 @@ const Feed = () => {
   const generateAvatarUrl = (seed: string) => {
     return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`;
   };
-  console.log(import.meta.env.VITE_BACKEND_URL);
+  // console.log(import.meta.env.VITE_BACKEND_URL);
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts`); // Adjust the endpoint as necessary
-        console.log(response.data);
+        // console.log(response.data);
         setPosts(response.data);
       } catch (err) {
         console.error('Error fetching posts:', err);
