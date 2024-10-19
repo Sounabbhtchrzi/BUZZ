@@ -36,7 +36,7 @@ const Feed = () => {
   const createPost = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/posts`, { content: postText }, { withCredentials: true });
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/posts/create`, { content: postText }, { withCredentials: true });
       if (response.status === 201) {
         console.log(response.data);
         setPostText('');
