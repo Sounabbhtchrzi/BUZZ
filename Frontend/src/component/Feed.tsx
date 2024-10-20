@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Tabs from "./Tab";
 import axios from "axios";
+import { Link } from "react-router-dom";
 // import { AvatarGenerator } from 'random-avatar-generator';
 
 
@@ -30,7 +31,7 @@ const Feed = () => {
         } else if (activeTab === 'new') {
           sortedPosts.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         }
-        
+
 
         setPosts(sortedPosts);
       } catch (err) {
@@ -137,30 +138,32 @@ const Feed = () => {
       <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
       {posts.length > 0 ? (
         posts.map((post: any) => (
-          <div key={post._id} className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300">
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center space-x-3">
-                <img
-                  src={generateAvatarUrl(post._id)}
-                  alt="User Avatar"
-                  className="w-12 h-12 rounded-full bg-slate-200"
-                />
-                <div>
-                  <h3 className="font-bold text-xl">Sara Andersen</h3>
-                  <p className="text-gray-500">
-                    {new Date(post.createdAt).toLocaleDateString('en-GB')}, {new Date(post.createdAt).toLocaleTimeString('en-GB', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: false,
-                    })}
-                  </p>
+          <div key={post._id} className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300 cursor-pointer">
+            <Link to={`/post/${post._id}`}>
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center space-x-3">
+                  <img
+                    src={generateAvatarUrl(post._id)}
+                    alt="User Avatar"
+                    className="w-12 h-12 rounded-full bg-slate-200"
+                  />
+                  <div>
+                    <h3 className="font-bold text-xl">Sara Andersen</h3>
+                    <p className="text-gray-500">
+                      {new Date(post.createdAt).toLocaleDateString('en-GB')}, {new Date(post.createdAt).toLocaleTimeString('en-GB', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false,
+                      })}
+                    </p>
+                  </div>
                 </div>
+                <button className="text-orange-500 text-2xl hover:text-orange-600 transition-colors">•••</button>
+
               </div>
-              <button className="text-orange-500 text-2xl hover:text-orange-600 transition-colors">•••</button>
-            </div>
+              <p className="text-xl mb-4">{post.content}🐶✨</p>
 
-            <p className="text-xl mb-4">{post.content}🐶✨</p>
-
+            </Link>
             <div className="mt-4 flex justify-between items-center">
               <button
                 className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors"
@@ -177,6 +180,7 @@ const Feed = () => {
                 <span className="font-bold">{post.comments.length} Comments</span>
               </button>
             </div>
+
 
             {activePostId === post._id && (
               <div className="mt-6 bg-orange-50 rounded-lg p-4">
