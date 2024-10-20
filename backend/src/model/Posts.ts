@@ -25,6 +25,15 @@ interface IPost extends Document {
     likes: ILike[];
 }
 
+interface IThemePost extends Document {
+    content: string;
+    userId: string; 
+    createdAt?: Date;
+    updatedAt?: Date;  
+    comments: IComment[];
+    likes: ILike[];
+}
+
 // Comment Schema
 const commentSchema = new Schema<IComment>({
     content: {
@@ -61,7 +70,26 @@ const postSchema = new Schema<IPost>({
     likes: [likeSchema],      
 }, { timestamps: true }); // Add timestamps option
 
-// Create the Post model
+const themePostSchema = new Schema<IThemePost>({
+    content: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    userId: {
+        type: String, 
+        required: true,
+    },
+    comments: [commentSchema],
+    likes: [likeSchema],
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        expires: '1d', // Automatically delete after 1 day
+    },
+}, { timestamps: true });
+
+const ThemePost = mongoose.model<IThemePost>('ThemePost', themePostSchema);
 const Post = mongoose.model<IPost>('Post', postSchema);
 
-export default Post;
+export { Post, ThemePost };

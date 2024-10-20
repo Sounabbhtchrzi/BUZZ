@@ -36,9 +36,9 @@ export default function Navbar() {
         <Link to={'/about'} className="text-orange-500 hover:text-orange-600 transition-colors">
           About Us
         </Link>
-        <button className="text-orange-500 hover:text-orange-600 transition-colors">
+        <Link to={'/theme'} className="text-orange-500 hover:text-orange-600 transition-colors">
           Theme
-        </button>
+        </Link>
       </div>
 
       {/* Mobile menu button */}
