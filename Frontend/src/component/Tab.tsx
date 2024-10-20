@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import React from 'react';
 
-const Tabs = () => {
-  const [activeTab, setActiveTab] = useState('hot')
+interface TabsProps {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+}
 
+const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
   return (
     <div className="w-full bg-white rounded-lg shadow-lg p-4 mt-6">
-
       <div className="flex justify-between border-b border-orange-200">
         <button
           className={`px-4 py-2 text-lg font-semibold ${
@@ -33,7 +35,7 @@ const Tabs = () => {
         </button>
       </div>
     </div>
-  )
+  );
 }
 
-export default Tabs
+export default Tabs;

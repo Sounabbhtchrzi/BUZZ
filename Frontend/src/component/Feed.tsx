@@ -12,6 +12,7 @@ const Feed = () => {
   const [commentText, setCommentText] = useState("");
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [reloadTrigger, setReloadTrigger] = useState(false);
+  const [activeTab, setActiveTab] = useState('hot');
 
 
   const generateAvatarUrl = (seed: string) => {
@@ -21,17 +22,24 @@ const Feed = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts`); // Adjust the endpoint as necessary
-        // console.log(response.data);
-        setPosts(response.data);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts`);
+        let sortedPosts = response.data;
+
+        if (activeTab === 'hot') {
+          sortedPosts.sort((a: any, b: any) => b.likes.length - a.likes.length);
+        } else if (activeTab === 'new') {
+          sortedPosts.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        }
+        
+
+        setPosts(sortedPosts);
       } catch (err) {
         console.error('Error fetching posts:', err);
-        console.log('Failed to fetch posts');
       }
     };
 
     fetchPosts();
-  }, [reloadTrigger]);
+  }, [reloadTrigger, activeTab]);
 
   const createPost = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -126,7 +134,7 @@ const Feed = () => {
         </form>
       </div>
 
-      <Tabs />
+      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
       {posts.length > 0 ? (
         posts.map((post: any) => (
           <div key={post._id} className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300">
