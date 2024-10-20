@@ -29,7 +29,7 @@ const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
           className={`px-4 py-2 text-lg font-semibold ${
             activeTab === 'top' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 hover:text-orange-500'
           }`}
-          onClick={() => setActiveTab('top')}
+          onClick={() => setActiveTab('theme')}
         >
           💡 Theme
         </button>
