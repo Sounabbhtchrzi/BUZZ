@@ -3,9 +3,7 @@ import {Post} from '../model/Posts';
 
 export const likePost = async (req: Request, res: Response): Promise<void> => {
   const { postId } = req.params;
-  //const userId = req.cookies.userId;
-  const userId= '123';
-
+  const userId = req.cookies.userId;
   try {
     const post = await Post.findById(postId);
     if (!post) {
@@ -39,8 +37,7 @@ export const likePost = async (req: Request, res: Response): Promise<void> => {
 export const addComment = async (req: Request, res: Response): Promise<void> => {
     const { postId } = req.params; 
     const { content } = req.body;  
-    //const userId = req.cookies.userId;
-    const userId= '123';
+    const userId = req.cookies.userId;
 
     if (!content || !userId) {
         res.status(400).json({ message: 'Content and userId are required' });
