@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const cookieMiddleware = (req, res, next) => {
     const userId = req.cookies.userId;
-    console.log('userId:', userId);
+    // console.log('userId:', userId);
     if (!userId) {
         const newUserId = uuidv4();
         res.cookie('userId', newUserId, {
