@@ -6,11 +6,15 @@ import { Link } from "react-router-dom";
 // import { AvatarGenerator } from 'random-avatar-generator';
 import ShareButton from "./Sharebutton";
 
+interface FeedProps {
+  searchQuery: string;
+}
 
-const Feed = () => {
+const Feed = ({searchQuery}:FeedProps) => {
   const [postText, setPostText] = useState("");
   const [posts, setPosts] = useState([]);
   const [commentText, setCommentText] = useState("");
+  const [filteredPosts, setFilteredPosts] = useState([]);
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [reloadTrigger, setReloadTrigger] = useState(false);
   const [activeTab, setActiveTab] = useState('hot');
@@ -41,6 +45,20 @@ const Feed = () => {
 
     fetchPosts();
   }, [reloadTrigger, activeTab]);
+
+  useEffect(() => {
+    const filtered = posts.filter((post: any) =>
+      post.content.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredPosts(filtered);
+  }, [searchQuery, posts]);
+
+  useEffect(() => {
+    const filtered = posts.filter((post: any) =>
+      post.content.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredPosts(filtered);
+  }, [searchQuery, posts]);
 
   const createPost = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -136,8 +154,8 @@ const Feed = () => {
       </div>
 
       <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-      {posts.length > 0 ? (
-        posts.map((post: any) => (
+      {filteredPosts.length > 0 ? (
+        filteredPosts.map((post: any) => (
           <div key={post._id} className="relative bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300 cursor-pointer">
             <Link to={`/post/${post._id}`}>
               <div className="flex justify-between items-center mb-4">
