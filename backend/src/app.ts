@@ -1,12 +1,11 @@
 import dotenv from 'dotenv'; // Import dotenv
-import express from 'express';
+import express, { Request, Response } from 'express'; 
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import connectDB from './db/db';
 dotenv.config();
 import postRoutes from './routes/postRoutes';
 import cookieMiddleware from './middleware/cookieMiddleware';
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -23,7 +22,7 @@ app.use(express.json());
 // routes
 app.use('/api/posts', postRoutes);
 
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
   res.send('Hello, World!');
 });
 
