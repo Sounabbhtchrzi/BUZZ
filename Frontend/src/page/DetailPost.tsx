@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Navbar from "../component/Navbar";
+import ShareButton from "../component/Sharebutton";
+
 interface Comment {
     _id: string;
     content: string;
@@ -67,46 +69,48 @@ const DetailPost = () => {
 
     const handleLike = async (id: string) => {
         try {
-          const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/posts/like/${id}`, {}, { withCredentials: true });
-          if (response.status === 200) {
-            // Update the local state with the updated post data
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/posts/like/${id}`, {}, { withCredentials: true });
+            if (response.status === 200) {
+                // Update the local state with the updated post data
+                const updatedPost = response.data.post;
+                setPost(() =>
+                    updatedPost
+                );
+                setReloadTrigger(!reloadTrigger);
+            }
+        } catch (err) {
+            console.error('Error occurred while liking/disliking the post:', err);
+        }
+    };
+
+    const postComment = async (postId: string) => {
+        if (!commentText.trim()) return;
+
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/api/posts/comment/${postId}`,
+                { content: commentText },
+                { withCredentials: true }
+            );
+
+            //   setActivePostId(null);
+            setCommentText('');
+            console.log(response.data.message);
             const updatedPost = response.data.post;
             setPost(() =>
-              updatedPost
+                updatedPost
             );
             setReloadTrigger(!reloadTrigger);
-          }
         } catch (err) {
-          console.error('Error occurred while liking/disliking the post:', err);
+            console.error('Error adding comment:', err);
         }
-      };
-    
-      const postComment = async (postId: string) => {
-        if (!commentText.trim()) return;
-    
-        try {
-          const response = await axios.post(
-            `${import.meta.env.VITE_BACKEND_URL}/api/posts/comment/${postId}`,
-            { content: commentText },
-            { withCredentials: true }
-          );
-    
-        //   setActivePostId(null);
-          setCommentText('');
-          console.log(response.data.message);
-          const updatedPost = response.data.post;
-          setPost(() =>
-            updatedPost
-          );
-          setReloadTrigger(!reloadTrigger);
-        } catch (err) {
-          console.error('Error adding comment:', err);
-        }
-      };
-    
+    };
+
     //   const handleCommentClick = (postId: string): void => {
     //     setActivePostId((prev: string | null) => (prev === postId ? null : postId));
     //   };
+
+    // const shareUrl = `https://buzz-s3.vercel.app/post/${post?._id}`;
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-white to-orange-100 font-sans relative overflow-hidden flex justify-center items-center gap-3">
@@ -140,8 +144,28 @@ const DetailPost = () => {
                                         <p className="text-gray-500">{new Date(post.createdAt).toLocaleDateString('en-GB')}, {new Date(post.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
                                     </div>
                                 </div>
-                                <button className="text-orange-500 text-2xl hover:text-orange-600 transition-colors">•••</button>
+                                <div className="relative">
+                                    <button
+                                        className="btn  text-orange-500 text-4xl hover:text-orange-600 transition-colors"
+                                        onClick={() => (document.getElementById("my_modal_3") as HTMLDialogElement).showModal()}
+                                    >
+                                        ➦
+                                    </button>
+                                    <dialog id="my_modal_3" className="modal rounded-lg border-4 border-orange-400">
+                                        <div className="modal-box rounded-lg">
+                                            <form method="dialog" className="">
+                                                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                            </form>
+                                            {/* <h3 className="font-bold text-lg">➦</h3> */}
+                                            {/* Use the ShareButton component and pass the post ID */}
+                                            <ShareButton postId={post._id} />
+                                        </div>
+                                    </dialog>
+
+                                </div>
                             </div>
+
+
                             <p className="text-xl mb-4">{post.content}🐶✨</p>
 
                             <div className="mt-4 flex justify-between items-center">
@@ -154,7 +178,7 @@ const DetailPost = () => {
                                 </button>
                                 <button
                                     className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors"
-                                    
+
                                 >
                                     <span className="text-2xl">💬</span>
                                     <span className="font-bold">{post.comments.length} Comments</span>
