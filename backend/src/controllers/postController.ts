@@ -3,7 +3,8 @@ import {Post} from '../model/Posts'; // Adjust the import as needed
 
 export const createPost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { content } = req.body;
-    const userId = req.cookies.userId; // Retrieve the UUID from the cookie
+    // const userId = req.cookies.userId; // Retrieve the UUID from the cookie
+    const userId=123;
     const newPost = new Post({
         content,
         userId, 
@@ -14,8 +15,8 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
     try {
         await newPost.save();
         res.status(201).json({ message: 'Post created successfully', post: newPost });
-    } catch (error: unknown) {
-        next(error as Error); 
+    } catch (error) {
+        next(error); 
     }
 };
 
