@@ -3,8 +3,7 @@ import {ThemePost} from '../model/Posts'; // Adjust the import as needed
 
 export const createThemePost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { content } = req.body;
-    // const userId = req.cookies.userId; // Retrieve the UUID from the cookie
-    const userId='123';
+    const userId = req.cookies.userId; // Retrieve the UUID from the cookie
     const newPost = new ThemePost({
         content,
         userId, 
