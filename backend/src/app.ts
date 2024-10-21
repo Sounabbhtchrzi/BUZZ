@@ -1,28 +1,30 @@
 import dotenv from 'dotenv'; // Import dotenv
-import express, { Request, Response } from 'express'; 
+import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import connectDB from './db/db';
 dotenv.config();
 import postRoutes from './routes/postRoutes';
 import cookieMiddleware from './middleware/cookieMiddleware';
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 const corsOptions = {
-  origin: process.env.FRONTEND_URL, // Update this to your frontend's URL
+  origin: `${process.env.VITE_FRONTEND_URL}`, // Update this to your frontend's URL
   credentials: true, // Allow credentials
 };
 app.use(cors(corsOptions));
 app.use(cookieParser()); 
 app.use(cookieMiddleware); 
+app.use(cookieParser());
 app.use(express.json());
 
 // routes
 app.use('/api/posts', postRoutes);
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
 
