@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
-import Post from '../model/Posts';  
+import {Post} from '../model/Posts';  
 
 export const likePost = async (req: Request, res: Response): Promise<void> => {
   const { postId } = req.params;
   const userId = req.cookies.userId;
-
   try {
     const post = await Post.findById(postId);
     if (!post) {

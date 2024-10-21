@@ -12,13 +12,12 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 const corsOptions = {
-  origin: `${process.env.VITE_FRONTEND_URL}`, // Update this to your frontend's URL
+  origin: process.env.FRONTEND_URL, // Update this to your frontend's URL
   credentials: true, // Allow credentials
 };
 app.use(cors(corsOptions));
 app.use(cookieParser()); 
 app.use(cookieMiddleware); 
-app.use(cookieParser());
 app.use(express.json());
 
 // routes
