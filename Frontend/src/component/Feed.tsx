@@ -20,6 +20,9 @@ const Feed = ({ searchQuery }: FeedProps) => {
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [reloadTrigger, setReloadTrigger] = useState(false);
   const [activeTab, setActiveTab] = useState('hot');
+  const [newPosts, setNewPosts] = useState([]);
+  const [hotPosts, setHotPosts] = useState([]);
+  const [allPosts, setAllPosts] = useState([]);
 
 
   const generateAvatarUrl = (seed: string) => {
@@ -31,10 +34,18 @@ const Feed = ({ searchQuery }: FeedProps) => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts`);
         let sortedPosts = response.data;
-
+        setAllPosts(sortedPosts);
+        const currentTime = new Date().getTime();
+        const oneDayAgo = currentTime - 24 * 60 * 60 * 1000;
+        setHotPosts(sortedPosts.filter((post: any) => post.likes.length >= 3));
+        sortedPosts.sort((a: any, b: any) => b.likes.length - a.likes.length);
+        setNewPosts(sortedPosts.filter((post: any) => new Date(post.createdAt).getTime() >= oneDayAgo));
+        
         if (activeTab === 'hot') {
+          sortedPosts = sortedPosts.filter((post: any) => post.likes.length >= 3);
           sortedPosts.sort((a: any, b: any) => b.likes.length - a.likes.length);
         } else if (activeTab === 'new') {
+          sortedPosts = sortedPosts.filter((post: any) => new Date(post.createdAt).getTime() >= oneDayAgo);
           sortedPosts.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         }
 
@@ -151,7 +162,12 @@ const Feed = ({ searchQuery }: FeedProps) => {
           </form>
         </div>
 
-        <Tabs activeTab={activeTab} setActiveTab={setActiveTab} posts={filteredPosts} />
+        <Tabs activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        posts={filteredPosts} 
+        newPostsCount={newPosts.length}   
+        hotPostsCount={hotPosts.length}
+        allPostsCount={allPosts.length} />
 
         {filteredPosts.length > 0 ? (
           filteredPosts.map((post: any) => (
