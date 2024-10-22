@@ -1,13 +1,21 @@
 'use client'
 
-import { useState } from 'react'
+import { useState,ChangeEvent } from 'react'
 import { Search, MoreVertical, X } from "lucide-react"
 import { Link } from "react-router-dom"
 
-export default function Navbar() {
+interface NavbarProps {
+  searchQuery: string;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>
+}
+export default function Navbar({ searchQuery, setSearchQuery }:NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
 
   return (
     <header className="bg-white shadow-md p-4 lg:w-1/2 w-11/12 rounded-md flex items-center justify-between relative z-10">
@@ -24,7 +32,9 @@ export default function Navbar() {
         <div className="relative flex justify-center items-center w-full max-w-md">
           <input
             type="text"
-            placeholder="Search for a friend"
+            value={searchQuery}
+            onChange={handleInputChange}
+            placeholder="Search for posts.."
             className="w-full p-2 px-4 rounded-full text-black bg-gray-100 border border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
           <Search className="absolute right-3 cursor-pointer text-orange-500" size={20} />

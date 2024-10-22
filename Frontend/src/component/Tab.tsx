@@ -3,9 +3,10 @@ import React from 'react';
 interface TabsProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  posts: any[];
 }
 
-const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
+const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab,posts }) => {
   return (
     <div className="w-full bg-white rounded-lg shadow-lg p-4 mt-6">
       <div className="flex justify-between border-b border-orange-200">
@@ -15,7 +16,7 @@ const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
           }`}
           onClick={() => setActiveTab('hot')}
         >
-          🔥 Hot
+          🔥 Hot ({posts.length})
         </button>
         <button
           className={`px-4 py-2 text-lg font-semibold ${
@@ -23,7 +24,7 @@ const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
           }`}
           onClick={() => setActiveTab('new')}
         >
-          ✨ New
+          ✨ New ({posts.length}) 
         </button>
         <button
           className={`px-4 py-2 text-lg font-semibold ${
@@ -39,3 +40,4 @@ const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
 }
 
 export default Tabs;
+

@@ -1,10 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
-import {ThemePost} from '../model/Posts'; // Adjust the import as needed
+import {ThemePost} from '../model/Posts.js'; // Adjust the import as needed
 
-export const createThemePost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const createThemePost = async (req, res, next) => {
     const { content } = req.body;
-    // const userId = req.cookies.userId; // Retrieve the UUID from the cookie
-    const userId='123';
+    const userId = req.cookies.userId; // Retrieve the UUID from the cookie
+
     const newPost = new ThemePost({
         content,
         userId, 
@@ -20,7 +19,7 @@ export const createThemePost = async (req: Request, res: Response, next: NextFun
     }
 };
 
-export const getThemePosts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getThemePosts = async (req, res, next) => {
     try {
         
         const posts = await ThemePost.find();
@@ -34,10 +33,9 @@ export const getThemePosts = async (req: Request, res: Response, next: NextFunct
 
 
 
-export const likeThemePost = async (req: Request, res: Response): Promise<void> => {
+export const likeThemePost = async (req, res) => {
   const { postId } = req.params;
-  //const userId = req.cookies.userId;
-  const userId= '123';
+  const userId = req.cookies.userId;
 
   try {
     const post = await ThemePost.findById(postId);
@@ -69,11 +67,10 @@ export const likeThemePost = async (req: Request, res: Response): Promise<void> 
 
 
 
-export const addThemeComment = async (req: Request, res: Response): Promise<void> => {
+export const addThemeComment = async (req, res) => {
     const { postId } = req.params; 
     const { content } = req.body;  
-    //const userId = req.cookies.userId;
-    const userId= '123';
+    const userId = req.cookies.userId;
 
     if (!content || !userId) {
         res.status(400).json({ message: 'Content and userId are required' });
@@ -106,7 +103,7 @@ export const addThemeComment = async (req: Request, res: Response): Promise<void
     }
 };
 
-export const clearPreviousPosts = async ( res: Response) => {
+export const clearPreviousPosts = async ( res) => {
     try {
       
   

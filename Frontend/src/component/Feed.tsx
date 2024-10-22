@@ -4,13 +4,17 @@ import Tabs from "./Tab";
 import axios from "axios";
 import { Link } from "react-router-dom";
 // import { AvatarGenerator } from 'random-avatar-generator';
+import ShareButton from "./Sharebutton";
 
+interface FeedProps {
+  searchQuery: string;
+}
 
-
-const Feed = () => {
+const Feed = ({searchQuery}:FeedProps) => {
   const [postText, setPostText] = useState("");
   const [posts, setPosts] = useState([]);
   const [commentText, setCommentText] = useState("");
+  const [filteredPosts, setFilteredPosts] = useState([]);
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [reloadTrigger, setReloadTrigger] = useState(false);
   const [activeTab, setActiveTab] = useState('hot');
@@ -41,6 +45,15 @@ const Feed = () => {
 
     fetchPosts();
   }, [reloadTrigger, activeTab]);
+
+  useEffect(() => {
+    const filtered = posts.filter((post: any) =>
+      post.content.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredPosts(filtered);
+  }, [searchQuery, posts]);
+
+
 
   const createPost = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -135,10 +148,11 @@ const Feed = () => {
         </form>
       </div>
 
-      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-      {posts.length > 0 ? (
-        posts.map((post: any) => (
-          <div key={post._id} className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300 cursor-pointer">
+      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} posts={filteredPosts} />
+    
+      {filteredPosts.length > 0 ? (
+        filteredPosts.map((post: any) => (
+          <div key={post._id} className="relative bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300 cursor-pointer">
             <Link to={`/post/${post._id}`}>
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center space-x-3">
@@ -158,12 +172,29 @@ const Feed = () => {
                     </p>
                   </div>
                 </div>
-                <button className="text-orange-500 text-2xl hover:text-orange-600 transition-colors">•••</button>
+
 
               </div>
               <p className="text-xl mb-4">{post.content}🐶✨</p>
 
             </Link>
+
+            <button
+              className="btn absolute top-4 right-5 text-orange-500 text-2xl hover:text-orange-600 transition-colors"
+              onClick={() => (document.getElementById("my_modal_3") as HTMLDialogElement).showModal()}
+            >
+              ➦
+            </button>
+            <dialog id="my_modal_3" className="modal rounded-lg border-4 border-orange-400">
+              <div className="modal-box rounded-lg">
+                <form method="dialog" className="">
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                </form>
+                {/* <h3 className="font-bold text-lg">➦</h3> */}
+                {/* Use the ShareButton component and pass the post ID */}
+                <ShareButton postId={post._id} />
+              </div>
+            </dialog>
             <div className="mt-4 flex justify-between items-center">
               <button
                 className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors"
@@ -238,4 +269,3 @@ const Feed = () => {
 }
 
 export default Feed;
-

@@ -1,10 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
-import {Post} from '../model/Posts'; // Adjust the import as needed
+import {Post} from '../model/Posts.js'; // Adjust the import as needed
 
-export const createPost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const createPost = async (req, res, next)=> {
     const { content } = req.body;
-    // const userId = req.cookies.userId; // Retrieve the UUID from the cookie
-    const userId=123;
+    const userId = req.cookies.userId; // Retrieve the UUID from the cookie
+    
     const newPost = new Post({
         content,
         userId, 
@@ -21,7 +20,7 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
 };
 
 
-export const getPosts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getPosts = async (req, res, next ) => {
     try {
         // Fetch all posts from the database
         const posts = await Post.find();
