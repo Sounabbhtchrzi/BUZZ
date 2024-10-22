@@ -4,6 +4,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import Navbar from "../component/Navbar";
 import ShareButton from "../component/Sharebutton";
+import ScrollToTopButton from "../component/ScrollTotop";
 
 interface Comment {
     _id: string;
@@ -31,6 +32,7 @@ const DetailPost = () => {
     // const [activePostId, setActivePostId] = useState<string | null>(null);
     const [reloadTrigger, setReloadTrigger] = useState(false);
     // const [posts, setPosts] = useState([]);
+    const [searchQuery, setSearchQuery] = useState<string>("")
 
     const generateAvatarUrl = (seed: string) => {
         return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`;
@@ -124,7 +126,7 @@ const DetailPost = () => {
             <div className="container mx-auto p-6 flex flex-col justify-center items-center gap-3 relative z-10">
                 {/* Fixed Navbar */}
                 <div className={`fixed left-0 right-0 z-50 flex justify-center items-center transition-all duration-300 ${isScrolled ? 'top-0' : 'top-6'}`}>
-                    <Navbar />
+                    <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
                 </div>
 
                 {/* Main feed */}
@@ -154,7 +156,7 @@ const DetailPost = () => {
                                     <dialog id="my_modal_3" className="modal rounded-lg border-4 border-orange-400">
                                         <div className="modal-box rounded-lg">
                                             <form method="dialog" className="">
-                                                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 bg-orange-400 text-white flex justify-center items-center font-bold w-6 h-6 rounded-full">✕</button>
                                             </form>
                                             {/* <h3 className="font-bold text-lg">➦</h3> */}
                                             {/* Use the ShareButton component and pass the post ID */}
@@ -236,7 +238,9 @@ const DetailPost = () => {
                     )}
                 </div>
             </div>
+            <ScrollToTopButton/>
         </div>
+        
     );
 };
 
