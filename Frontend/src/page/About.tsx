@@ -11,24 +11,24 @@ export default function Component() {
 
   const creators = [
     {
-      name: "Shreyam Kundu",
-      about: "The solid defender who keeps the code bug-free and makes sure everything runs smoothly, ensuring a strong foundation for the project!",
-      linkedin: "https://www.linkedin.com/in/shreyamkundu/",
-      github: "https://github.com/ShreyamKundu",
-      avatar: "/shreyam.webp?height=200&width=200",
-    },
-    {
       name: "Snikdhendu Pramanik",
       about: "The dynamic striker who crafts stunning interfaces and scores big with user satisfaction, bringing creativity to every project!",
       linkedin: "https://www.linkedin.com/in/snikdhendu-pramanik",
       github: "https://github.com/snikdhendu",
-      avatar: "/shreyam.webp.svg?height=200&width=200",
+      avatar: "/shreyam.webp?height=200&width=200",
     },
     {
       name: "Sounab Bhattacharjee",
       about: "The versatile midfielder who connects all the pieces, ensuring seamless collaboration and a great user experience throughout the project!",
       linkedin: "https://www.linkedin.com/in/sounab-bhattacharjee-aa3b3b266/",
       github: "https://github.com/Sounabbhtchrzi",
+      avatar: "/shreyam.webp?height=200&width=200",
+    },
+    {
+      name: "Shreyam Kundu",
+      about: "The solid defender who keeps the code bug-free and makes sure everything runs smoothly, ensuring a strong foundation for the project!",
+      linkedin: "https://www.linkedin.com/in/shreyamkundu/",
+      github: "https://github.com/ShreyamKundu",
       avatar: "/shreyam.webp?height=200&width=200",
     },
   ]
