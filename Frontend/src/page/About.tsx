@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 
 export default function Component() {
@@ -13,24 +11,24 @@ export default function Component() {
 
   const creators = [
     {
+      name: "Shreyam Kundu",
+      about: "The solid defender who keeps the code bug-free and makes sure everything runs smoothly, ensuring a strong foundation for the project!",
+      linkedin: "https://www.linkedin.com/in/shreyamkundu/",
+      github: "https://github.com/ShreyamKundu",
+      avatar: "/shreyam.webp?height=200&width=200",
+    },
+    {
       name: "Snikdhendu Pramanik",
       about: "The dynamic striker who crafts stunning interfaces and scores big with user satisfaction, bringing creativity to every project!",
       linkedin: "https://www.linkedin.com/in/snikdhendu-pramanik",
       github: "https://github.com/snikdhendu",
-      avatar: "/shreyam.webp?height=200&width=200",
+      avatar: "/shreyam.webp.svg?height=200&width=200",
     },
     {
       name: "Sounab Bhattacharjee",
       about: "The versatile midfielder who connects all the pieces, ensuring seamless collaboration and a great user experience throughout the project!",
       linkedin: "https://www.linkedin.com/in/sounab-bhattacharjee-aa3b3b266/",
       github: "https://github.com/Sounabbhtchrzi",
-      avatar: "/shreyam.webp?height=200&width=200",
-    },
-    {
-      name: "Shreyam Kundu",
-      about: "The solid defender who keeps the code bug-free and makes sure everything runs smoothly, ensuring a strong foundation for the project!",
-      linkedin: "https://www.linkedin.com/in/shreyamkundu/",
-      github: "https://github.com/ShreyamKundu",
       avatar: "/shreyam.webp?height=200&width=200",
     },
   ]
@@ -48,6 +46,10 @@ export default function Component() {
 
       <div className="container mx-auto p-6 relative z-10">
         <h1 className="text-6xl font-bold text-orange-500 text-center mb-8">BUZZ</h1>
+
+        <p className="text-xl text-orange-600 text-center mb-8 italic">
+          Anonymous thoughts, real connections
+        </p>
 
         <div className="bg-white bg-opacity-80 rounded-lg p-6 mb-8 transform rotate-1 hover:rotate-0 transition-transform duration-300">
           <h2 className="text-3xl font-bold text-orange-500 mb-4">About the Project</h2>
