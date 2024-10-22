@@ -53,12 +53,7 @@ const Feed = ({searchQuery}:FeedProps) => {
     setFilteredPosts(filtered);
   }, [searchQuery, posts]);
 
-  useEffect(() => {
-    const filtered = posts.filter((post: any) =>
-      post.content.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredPosts(filtered);
-  }, [searchQuery, posts]);
+
 
   const createPost = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -153,7 +148,8 @@ const Feed = ({searchQuery}:FeedProps) => {
         </form>
       </div>
 
-      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} posts={filteredPosts} />
+    
       {filteredPosts.length > 0 ? (
         filteredPosts.map((post: any) => (
           <div key={post._id} className="relative bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300 cursor-pointer">
@@ -273,4 +269,3 @@ const Feed = ({searchQuery}:FeedProps) => {
 }
 
 export default Feed;
-
