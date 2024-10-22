@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Tabs from "./Tab";
 
 // Define the Post interface
 interface Post {
@@ -31,6 +32,10 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
   const [currentDate, setCurrentDate] = useState(new Date().toDateString());
   const [currentTheme, setCurrentTheme] = useState("Dream");
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]); 
+  const [activeTab, setActiveTab] = useState('hot');
+  const [newPosts, setNewPosts] = useState([]);
+  const [hotPosts, setHotPosts] = useState([]);
+  const [allPosts, setAllPosts] = useState([]);
 
   const generateAvatarUrl = (seed: string) => {
     return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`;
@@ -40,7 +45,24 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts/theme`);
-        setPosts(response.data);
+        let sortedPosts = response.data;
+        setAllPosts(sortedPosts);
+        const currentTime = new Date().getTime();
+        const oneDayAgo = currentTime - 12 * 60 * 60 * 1000;
+        setHotPosts(sortedPosts.filter((post: any) => post.likes.length >= 3));
+        sortedPosts.sort((a: any, b: any) => b.likes.length - a.likes.length);
+        setNewPosts(sortedPosts.filter((post: any) => new Date(post.createdAt).getTime() >= oneDayAgo));
+        
+        if (activeTab === 'hot') {
+          sortedPosts = sortedPosts.filter((post: any) => post.likes.length >= 3);
+          sortedPosts.sort((a: any, b: any) => b.likes.length - a.likes.length);
+        } else if (activeTab === 'new') {
+          sortedPosts = sortedPosts.filter((post: any) => new Date(post.createdAt).getTime() >= oneDayAgo);
+          sortedPosts.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        }
+
+
+        setPosts(sortedPosts);
       } catch (err) {
         console.error("Error fetching theme posts:", err);
       }
@@ -59,7 +81,7 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
     };
     fetchPosts();
     checkAndUpdateTheme();
-  }, [reloadTrigger, currentDate]);
+  }, [reloadTrigger, currentDate,activeTab]);
 
 
 
@@ -158,6 +180,13 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
           </div>
         </form>
       </div>
+
+      <Tabs activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        posts={filteredPosts} 
+        newPostsCount={newPosts.length}   
+        hotPostsCount={hotPosts.length}
+        allPostsCount={allPosts.length} />
 
       {filteredPosts.length > 0 ? (
         filteredPosts.map((post: Post) => (

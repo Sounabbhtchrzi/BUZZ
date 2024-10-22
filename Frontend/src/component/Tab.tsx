@@ -4,9 +4,12 @@ interface TabsProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   posts: any[];
+  newPostsCount: number;  
+  hotPostsCount: number;
+  allPostsCount: number;
 }
 
-const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab,posts }) => {
+const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab,posts,newPostsCount,hotPostsCount,allPostsCount }) => {
   return (
     <div className="w-full bg-white rounded-lg shadow-lg p-4 mt-6">
       <div className="flex justify-between border-b border-orange-200">
@@ -16,7 +19,7 @@ const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab,posts }) => {
           }`}
           onClick={() => setActiveTab('hot')}
         >
-          🔥 Hot ({posts.length})
+          🔥 Hot ({activeTab === 'hot' ? posts.length : hotPostsCount})
         </button>
         <button
           className={`px-4 py-2 text-lg font-semibold ${
@@ -24,15 +27,15 @@ const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab,posts }) => {
           }`}
           onClick={() => setActiveTab('new')}
         >
-          ✨ New ({posts.length}) 
+          ✨ New ({activeTab === 'new' ? posts.length : newPostsCount}) 
         </button>
         <button
           className={`px-4 py-2 text-lg font-semibold ${
-            activeTab === 'top' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 hover:text-orange-500'
+            activeTab === 'all' ? 'text-orange-500 border-b-2 border-orange-500' : 'text-gray-500 hover:text-orange-500'
           }`}
-          onClick={() => setActiveTab('theme')}
+          onClick={() => setActiveTab('all')}
         >
-          💡 Theme
+          💡 All ({activeTab === 'all' ? posts.length : allPostsCount})
         </button>
       </div>
     </div>
