@@ -17,14 +17,20 @@ interface Comment {
   createdAt: string;
 }
 
-const ThemeFeed = () => {
+interface ThemeFeedProps {
+  searchQuery: string;
+}
+
+
+const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
   const [postText, setPostText] = useState("");
   const [posts, setPosts] = useState<Post[]>([]); // Use the Post type here
   const [commentText, setCommentText] = useState("");
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [reloadTrigger, setReloadTrigger] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date().toDateString());
-  const [currentTheme, setCurrentTheme] = useState("");
+  const [currentTheme, setCurrentTheme] = useState("Dream");
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]); 
 
   const generateAvatarUrl = (seed: string) => {
     return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`;
@@ -41,28 +47,28 @@ const ThemeFeed = () => {
      
     };
 
-    const checkAndUpdateTheme = () => {
+    const checkAndUpdateTheme = async () => {
       const today = new Date().toDateString();
       
       if (currentDate !== today) {
-        // await clearPreviousPosts();
+        await clearPreviousPosts();
         setCurrentDate(today);
         const newTheme = fetchNewTheme();
         setCurrentTheme(newTheme);
-        console.log(currentTheme);
       }
-     
-      
     };
-
-    
     fetchPosts();
     checkAndUpdateTheme();
   }, [reloadTrigger, currentDate]);
 
-  useEffect(()=>{
-    setCurrentTheme(fetchNewTheme());
-  },[currentDate]);
+
+
+  useEffect(() => {
+    const filtered = posts.filter((post: any) =>
+      post.content.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredPosts(filtered);
+  }, [searchQuery, posts]);
 
 
 
@@ -72,14 +78,14 @@ const ThemeFeed = () => {
     return randomTheme;
   };
 
-//   const clearPreviousPosts = async () => {
-//     try {
-//       await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/posts/theme/clear`, { withCredentials: true });
-//       setReloadTrigger((prev) => !prev);
-//     } catch (err) {
-//       console.error("Error clearing previous posts:", err);
-//     }
-//   };
+  const clearPreviousPosts = async () => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/posts/theme/clear`, { withCredentials: true });
+      setReloadTrigger((prev) => !prev);
+    } catch (err) {
+      console.error("Error clearing previous posts:", err);
+    }
+  };
 
   const createPost = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -153,8 +159,8 @@ const ThemeFeed = () => {
         </form>
       </div>
 
-      {posts.length > 0 ? (
-        posts.map((post: Post) => (
+      {filteredPosts.length > 0 ? (
+        filteredPosts.map((post: Post) => (
           <div key={post._id} className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300">
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center space-x-3">

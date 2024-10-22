@@ -6,6 +6,7 @@ const ThemesPage= () => {
 
   const [backgroundEmojis, setBackgroundEmojis] = useState<string[]>([])
   const [isScrolled, setIsScrolled] = useState<boolean>(false)
+  const [searchQuery, setSearchQuery] = useState<string>("")
 
   useEffect(() => {
     const emojis = ['😀', '😎', '🤪', '🥳', '🚀', '🌈', '🍕', '🎉', '🦄', '🐶', '🌟', '🎸']
@@ -48,12 +49,12 @@ const ThemesPage= () => {
           className={`fixed left-0 right-0 z-50 flex justify-center items-center transition-all duration-300 ${isScrolled ? 'top-0' : 'top-6'
             }`}
         >
-          <Navbar />
+          <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery}/>
         </div>
 
         {/* Main feed with added top margin to account for fixed navbar */}
         <div className="mt-24 w-full flex flex-col items-center">
-          <ThemeFeed />
+          <ThemeFeed searchQuery={searchQuery}/>
         
         </div>
       </div>
