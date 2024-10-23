@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Tabs from "./Tab";
+import ShareButton from "./Sharebutton"
+import ScrollToTopButton from "./ScrollTotop";
+import { toast } from "react-toastify";
+import { uniqueNamesGenerator, Config, adjectives, animals } from 'unique-names-generator';
 
 // Define the Post interface
 interface Post {
@@ -35,6 +39,7 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
   const [newPosts, setNewPosts] = useState([]);
   const [hotPosts, setHotPosts] = useState([]);
   const [allPosts, setAllPosts] = useState([]);
+  const [shortNames, setShortNames] = useState<{ [key: string]: string }>({});
 
   const generateAvatarUrl = (seed: string) => {
     return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`;
@@ -44,35 +49,48 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts/theme`);
-        let sortedPosts = response.data;
+        const sortedPosts = response.data;
+
         setAllPosts(sortedPosts);
-        const currentTime = new Date().getTime();
-        const oneDayAgo = currentTime - 12 * 60 * 60 * 1000;
-        setHotPosts(sortedPosts.filter((post: any) => post.likes.length >= 3));
-        sortedPosts.sort((a: any, b: any) => b.likes.length - a.likes.length);
-        setNewPosts(sortedPosts.filter((post: any) => new Date(post.createdAt).getTime() >= oneDayAgo));
+        setHotPosts(sortedPosts.filter((post:any) => post.likes.length >= 3));
         
-        if (activeTab === 'hot') {
-          sortedPosts = sortedPosts.filter((post: any) => post.likes.length >= 3);
-          sortedPosts.sort((a: any, b: any) => b.likes.length - a.likes.length);
-        } else if (activeTab === 'new') {
-          sortedPosts = sortedPosts.filter((post: any) => new Date(post.createdAt).getTime() >= oneDayAgo);
-          sortedPosts.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        }
-
-
-        setPosts(sortedPosts);
+        const currentTime = new Date().getTime();
+        const oneDayAgo = currentTime - 24 * 60 * 60 * 1000;
+        setNewPosts(sortedPosts.filter((post:any) => new Date(post.createdAt).getTime() >= oneDayAgo));
+        filterPosts(sortedPosts);
       } catch (err) {
-        console.error("Error fetching theme posts:", err);
+        console.error('Error fetching posts:', err);
       }
-     
     };
+  
+    fetchPosts();
+  }, [reloadTrigger]); 
+  
 
+  const filterPosts = (posts:any) => {
+    let sortedPosts = [...posts];
+  
+    if (activeTab === 'hot') {
+      sortedPosts = sortedPosts.filter((post) => post.likes.length >= 3);
+      sortedPosts.sort((a, b) => b.likes.length - a.likes.length);
+    } else if (activeTab === 'new') {
+      const currentTime = new Date().getTime();
+      const oneDayAgo = currentTime - 24 * 60 * 60 * 1000;
+      sortedPosts = sortedPosts.filter((post) => new Date(post.createdAt).getTime() >= oneDayAgo);
+      sortedPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+  
+    setPosts(sortedPosts); 
+  };
+  
+  useEffect(() => {
+    filterPosts(allPosts); 
+  }, [activeTab, allPosts]);
+
+  useEffect(()=>{
     const todayTheme = fetchTodayTheme();
     setCurrentTheme(todayTheme);
-    fetchPosts();
-    
-  }, [reloadTrigger, activeTab]);
+  },[])
 
 
 
@@ -82,6 +100,29 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
     );
     setFilteredPosts(filtered);
   }, [searchQuery, posts]);
+
+  useEffect(() => {
+    
+    if (filteredPosts.length > 0) {
+      const newNames: { [key: string]: string } = { ...shortNames }; 
+  
+      filteredPosts.forEach((post: any) => {
+       
+        if (!newNames[post._id]) {
+          newNames[post._id] = uniqueNamesGenerator(customConfig); 
+        }
+  
+        post.comments.forEach((comment: any) => {
+         
+          if (!newNames[comment._id]) {
+            newNames[comment._id] = uniqueNamesGenerator(customConfig); 
+          }
+        });
+      });
+      setShortNames(newNames);
+    }
+  }, [filteredPosts]); 
+  
 
 
 
@@ -108,6 +149,9 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
       if (response.status === 201) {
         setPostText("");
         setReloadTrigger((prev) => !prev);
+        toast.success("Post done Sucessfully", {
+          style: { backgroundColor: 'green', color: 'white' }, // Custom inline styles
+        });
       } else {
         console.log("Failed to create theme post.");
       }
@@ -149,11 +193,19 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
     }
   };
 
+  const customConfig: Config = {
+    dictionaries: [adjectives,animals],
+    separator: '-',
+    length: 2,
+  };
+
+
   const handleCommentClick = (postId: string): void => {
     setActivePostId((prev) => (prev === postId ? null : postId));
   };
 
   return (
+    <>
     <main className="lg:w-1/2 w-11/12 space-y-6">
     <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300">
       <h2 className="text-3xl font-bold text-orange-600 text-center mb-4">
@@ -194,7 +246,7 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
                 className="w-12 h-12 rounded-full bg-slate-200"
               />
               <div>
-                <h3 className="font-bold text-xl">User</h3>
+              <h3 className="font-bold text-xl text-gray-800"> {shortNames[post._id]}</h3>
                 <p className="text-gray-500">
                   {new Date(post.createdAt).toLocaleDateString('en-GB')}, {new Date(post.createdAt).toLocaleTimeString('en-GB', {
                     hour: '2-digit',
@@ -204,10 +256,33 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
                 </p>
               </div>
             </div>
-            <button className="text-orange-500 text-2xl hover:text-orange-600 transition-colors">•••</button>
+            <button
+                    className="text-orange-500 hover:text-orange-600 transition-colors transform hover:scale-110"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      (document.getElementById(`share_modal_${post._id}`) as HTMLDialogElement)?.showModal();
+                    }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+              </button>
           </div>
   
           <p className="text-xl mb-4">{post.content}🐶✨</p>
+
+          <dialog id={`share_modal_${post._id}`} className="modal rounded-xl border-4 border-orange-400">
+
+                <div className="modal-box rounded-lg">
+                  <form method="dialog" className="">
+                    <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 bg-orange-400 text-white flex justify-center items-center font-bold w-6 h-6 rounded-full">✕</button>
+                  </form>
+                  {/* <h3 className="font-bold text-lg">➦</h3> */}
+                  {/* Use the ShareButton component and pass the post ID */}
+                  <ShareButton postId={post._id} />
+                </div>
+
+              </dialog>
   
           <div className="mt-4 flex justify-between items-center">
             <button
@@ -245,29 +320,30 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
               </button>
   
               <div className="mt-6 space-y-4">
-                {post.comments.map((comment: Comment) => (
-                  <div key={comment._id} className="bg-white rounded-lg p-4 shadow-sm">
-                    <div className="flex items-start space-x-3">
-                      <img
-                        src={generateAvatarUrl(comment._id)}
-                        alt="Comment Avatar"
-                        className="w-8 h-8 rounded-full bg-slate-200"
-                      />
-                      <div>
-                        <p className="font-bold">User</p>
-                        <p>{comment.content}</p>
+                    {post.comments.map((comment: any) => (
+                      <div key={comment._id} className="bg-white rounded-xl p-4 shadow-sm transition-all duration-300 hover:shadow-md">
+                        <div className="flex items-start space-x-3">
+                          <img
+                            src={generateAvatarUrl(comment._id)}
+                            alt="Commenter Avatar"
+                            className="w-10 h-10 rounded-full bg-orange-100 border-2 border-orange-300"
+                          />
+                          <div >
+                            <h4 className="font-bold text-gray-800">{shortNames[comment._id]}</h4>
+                            <p className="text-sm text-gray-600">{comment.content}</p>
+                            <p className="text-xs text-gray-400 mt-2">
+                              {new Date(comment.createdAt).toLocaleDateString('en-GB')} at{' '}
+                              {new Date(comment.createdAt).toLocaleTimeString('en-GB', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false,
+                              })}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <p className="text-gray-500 mt-2 text-sm">
-                      {new Date(comment.createdAt).toLocaleDateString('en-GB')}, {new Date(comment.createdAt).toLocaleTimeString('en-GB', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: false,
-                      })}
-                    </p>
+                    ))}
                   </div>
-                ))}
-              </div>
             </div>
           )}
         </div>
@@ -278,6 +354,8 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
       </div>
     )}
   </main>
+  <ScrollToTopButton />
+  </>
   
   );
 };
