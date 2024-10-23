@@ -18,7 +18,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use(cookieParser());
-app.use(cookieMiddleware);
+// app.use(cookieMiddleware);
 app.use(express.json());
 
 // Routes
@@ -26,6 +26,12 @@ app.use('/api/posts', postRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello, World!');
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
 });
 
 // Connect to MongoDB and start the server
