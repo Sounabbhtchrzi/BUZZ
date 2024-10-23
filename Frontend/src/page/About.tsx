@@ -15,14 +15,14 @@ export default function Component() {
       about: "The dynamic striker who crafts stunning interfaces and scores big with user satisfaction, bringing creativity to every project!",
       linkedin: "https://www.linkedin.com/in/snikdhendu-pramanik",
       github: "https://github.com/snikdhendu",
-      avatar: "/shreyam.webp?height=200&width=200",
+      avatar: "/snikdhendu.png?height=200&width=200",
     },
     {
       name: "Sounab Bhattacharjee",
       about: "The versatile midfielder who connects all the pieces, ensuring seamless collaboration and a great user experience throughout the project!",
       linkedin: "https://www.linkedin.com/in/sounab-bhattacharjee-aa3b3b266/",
       github: "https://github.com/Sounabbhtchrzi",
-      avatar: "/shreyam.webp?height=200&width=200",
+      avatar: "/sounab.jpg?height=200&width=200",
     },
     {
       name: "Shreyam Kundu",
@@ -47,7 +47,7 @@ export default function Component() {
       <div className="container mx-auto p-6 relative z-10">
         <h1 className="text-6xl font-bold text-orange-500 text-center mb-8">      
           <Link to='/' className="group">
-          <h1 className="lg:text-6xl text-base font-extrabold relative">
+          <h1 className="lg:text-6xl text-3xl font-extrabold relative">
             <span className="inline-block transform hover:scale-150 transition-transform duration-300 text-orange-500">B</span>
             <span className="inline-block transform hover:rotate-180 transition-transform duration-300 text-orange-600">U</span>
             <span className="inline-block transform hover:skew-y-12 transition-transform duration-300 text-orange-700">Z</span>
