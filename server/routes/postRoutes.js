@@ -2,6 +2,7 @@ import express from 'express';
 import { createPost , getPosts} from '../controllers/postController.js';
 import { addComment, likePost } from '../controllers/likeController.js';
 import { createThemePost , getThemePosts , likeThemePost , addThemeComment, clearPreviousPosts } from '../controllers/themeController.js';
+import { submitFeedback } from '../controllers/feedbackController.js';
 
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.post('/theme/create', createThemePost);
 router.post('/theme/like/:postId',likeThemePost);
 router.post('/theme/comment/:postId',addThemeComment);
 router.delete('/theme/clear',clearPreviousPosts);
+router.post('/feedback', submitFeedback);
 
 export default router;

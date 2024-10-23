@@ -53,7 +53,7 @@ const themePostSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-        expires: '1d', // Automatically delete after 1 day
+        
     },
 }, { timestamps: true });
 

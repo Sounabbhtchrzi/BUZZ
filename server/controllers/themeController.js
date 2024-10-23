@@ -20,15 +20,24 @@ export const createThemePost = async (req, res, next) => {
 };
 
 export const getThemePosts = async (req, res, next) => {
-    try {
-        
-        const posts = await ThemePost.find();
-        
-        // Send the posts back to the client
-        res.status(200).json(posts);
-    } catch (error) {
-        next(error); 
-    }
+  try {
+      const startOfDay = new Date();
+      startOfDay.setHours(0, 0, 0, 0); // Set to midnight
+
+      const endOfDay = new Date();
+      endOfDay.setHours(23, 59, 59, 999); // Set to the last millisecond of the day
+
+      // Fetch posts created within the current day
+      const posts = await ThemePost.find({
+          createdAt: {
+              $gte: startOfDay,
+              $lte: endOfDay,
+          },
+      });
+      res.status(200).json(posts);
+  } catch (error) {
+      next(error);
+  }
 };
 
 
