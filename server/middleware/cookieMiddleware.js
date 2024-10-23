@@ -6,13 +6,6 @@ const cookieMiddleware = async (req, res, next) => {
 
     if (!userId) {
         const newUserId = uuidv4();
-        res.cookie('userId', newUserId, {
-            maxAge: 30 * 24 * 60 * 60 * 1000,  // 30 days
-            httpOnly: true,                   // Prevents access via JavaScript
-            secure: process.env.NODE_ENV === 'production',  // Only send over HTTPS in production
-            sameSite: 'None',                 // Adjust as needed
-        });
-
         try {
             let visitorCount = await VisitorCount.findOne();
             if (visitorCount) {
@@ -25,6 +18,12 @@ const cookieMiddleware = async (req, res, next) => {
         } catch (error) {
             console.error('Error updating visitor count:', error);
         }
+        res.cookie('userId', newUserId, {
+            maxAge: 30 * 24 * 60 * 60 * 1000,  // 30 days
+            httpOnly: true,                   // Prevents access via JavaScript
+            secure: process.env.NODE_ENV === 'production',  // Only send over HTTPS in production
+            sameSite: 'None',                 // Adjust as needed
+        });
     }
 
     next();
