@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-
+import { Link } from "react-router-dom"
 export default function Component() {
   const [backgroundEmojis, setBackgroundEmojis] = useState<string[]>([])
 
@@ -45,7 +45,15 @@ export default function Component() {
       </div>
 
       <div className="container mx-auto p-6 relative z-10">
-        <h1 className="text-6xl font-bold text-orange-500 text-center mb-8">BUZZ</h1>
+        <h1 className="text-6xl font-bold text-orange-500 text-center mb-8">      
+          <Link to='/' className="group">
+          <h1 className="lg:text-6xl text-base font-extrabold relative">
+            <span className="inline-block transform hover:scale-150 transition-transform duration-300 text-orange-500">B</span>
+            <span className="inline-block transform hover:rotate-180 transition-transform duration-300 text-orange-600">U</span>
+            <span className="inline-block transform hover:skew-y-12 transition-transform duration-300 text-orange-700">Z</span>
+            <span className="inline-block transform hover:-skew-y-12 transition-transform duration-300 text-orange-800">Z</span>
+          </h1>
+        </Link></h1>
 
         <p className="text-xl text-orange-600 text-center mb-8 italic">
           Anonymous thoughts, real connections
@@ -72,9 +80,8 @@ export default function Component() {
           {creators.map((creator, index) => (
             <div
               key={index}
-              className={`bg-white bg-opacity-80 rounded-lg p-6 transform ${
-                index % 2 === 0 ? "rotate-2" : "-rotate-2"
-              } hover:rotate-0 transition-transform duration-300`}
+              className={`bg-white bg-opacity-80 rounded-lg p-6 transform ${index % 2 === 0 ? "rotate-2" : "-rotate-2"
+                } hover:rotate-0 transition-transform duration-300`}
             >
               <div className="flex flex-col items-center mb-4">
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-orange-500 mb-4">

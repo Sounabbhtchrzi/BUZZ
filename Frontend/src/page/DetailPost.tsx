@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import Navbar from "../component/Navbar";
 import ShareButton from "../component/Sharebutton";
 import ScrollToTopButton from "../component/ScrollTotop";
-
+import { uniqueNamesGenerator, Config, adjectives, animals } from "unique-names-generator"; // Import uniqueNamesGenerator
 interface Comment {
     _id: string;
     content: string;
@@ -33,6 +33,7 @@ const DetailPost = () => {
     const [reloadTrigger, setReloadTrigger] = useState(false);
     // const [posts, setPosts] = useState([]);
     const [searchQuery, setSearchQuery] = useState<string>("")
+   
 
     const generateAvatarUrl = (seed: string) => {
         return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`;
@@ -61,6 +62,7 @@ const DetailPost = () => {
                 const posts: Post[] = response.data; // Assuming your API returns an array of posts
                 const post = posts.find((p) => p._id === id);
                 setPost(post || null); // Set to null if not found
+                
             } catch (err) {
                 console.error('Error fetching posts:', err);
             }
@@ -107,6 +109,19 @@ const DetailPost = () => {
             console.error('Error adding comment:', err);
         }
     };
+    const customConfig: Config = {
+        dictionaries: [adjectives, animals],
+        separator: '-',
+        length: 2,
+    };
+
+    const generateUniqueName = (id: string) => {
+        // Use the post or comment ID to generate a new name each time
+        return uniqueNamesGenerator({
+            ...customConfig,
+            seed: id, // Ensure uniqueness by seeding with the post/comment ID
+        });
+    };
 
     //   const handleCommentClick = (postId: string): void => {
     //     setActivePostId((prev: string | null) => (prev === postId ? null : postId));
@@ -141,7 +156,7 @@ const DetailPost = () => {
                                         className="w-12 h-12 rounded-full bg-slate-200"
                                     />
                                     <div>
-                                        <h3 className="font-bold text-xl">Sara Andersen</h3>
+                                        <h3 className="font-bold text-xl">{generateUniqueName(post._id)}</h3>
                                         {/* Uncomment if you want to display the date */}
                                         <p className="text-gray-500">{new Date(post.createdAt).toLocaleDateString('en-GB')}, {new Date(post.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
                                     </div>
@@ -151,7 +166,9 @@ const DetailPost = () => {
                                         className="btn  text-orange-500 text-4xl hover:text-orange-600 transition-colors"
                                         onClick={() => (document.getElementById("my_modal_3") as HTMLDialogElement).showModal()}
                                     >
-                                        ➦
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                        </svg>
                                     </button>
                                     <dialog id="my_modal_3" className="modal rounded-lg border-4 border-orange-400">
                                         <div className="modal-box rounded-lg">
@@ -168,21 +185,25 @@ const DetailPost = () => {
                             </div>
 
 
-                            <p className="text-xl mb-4">{post.content}🐶✨</p>
+                            <p className="text-xl mb-4">{post.content}</p>
 
                             <div className="mt-4 flex justify-between items-center">
                                 <button
                                     className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors"
                                     onClick={() => handleLike(post._id)}
                                 >
-                                    <span className="text-2xl">❤️</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                    </svg>
                                     <span className="font-bold">{post.likes.length} Likes</span>
                                 </button>
                                 <button
                                     className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors"
 
                                 >
-                                    <span className="text-2xl">💬</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                    </svg>
                                     <span className="font-bold">{post.comments.length} Comments</span>
                                 </button>
                             </div>
@@ -197,7 +218,7 @@ const DetailPost = () => {
                                     rows={3}
                                 />
                                 <button
-                                    className="mt-2 bg-orange-500 text-white px-6 py-2 rounded-full font-bold hover:bg-orange-600 transition-colors duration-200 shadow-md hover:shadow-lg"
+                                    className="mt-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-full font-bold hover:from-orange-500 hover:to-pink-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
                                     onClick={() => postComment(post._id)}
                                 >
                                     Post Comment
@@ -213,8 +234,8 @@ const DetailPost = () => {
                                                     className="w-8 h-8 rounded-full bg-orange-200"
                                                 />
                                                 <div className="flex-1">
-                                                    <p>User</p>
-                                                    <div className="flex w-full justify-between ">
+                                                    <p>{generateUniqueName(comment._id)}</p>
+                                                    <div className="flex w-full justify-between  ">
                                                         <p className="text-gray-600 mt-1 font-semibold">{comment.content}</p>
                                                         <p className="text-xs text-gray-400 mt-2">
                                                             {new Date(comment.createdAt).toLocaleDateString('en-GB')} at{' '}
@@ -238,9 +259,9 @@ const DetailPost = () => {
                     )}
                 </div>
             </div>
-            <ScrollToTopButton/>
+            <ScrollToTopButton />
         </div>
-        
+
     );
 };
 
