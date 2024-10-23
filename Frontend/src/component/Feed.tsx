@@ -9,6 +9,23 @@ import ScrollToTopButton from "./ScrollTotop";
 import Feedbackbutton from "./Feedbackbutton";
 import { toast } from "react-toastify";
 import { uniqueNamesGenerator, Config, adjectives, animals } from 'unique-names-generator';
+
+interface Post {
+  _id: string;
+  content: string;
+  createdAt: string;
+  likes: string[]; // or you can define a more specific type
+  comments: Comment[]; // Define Comment if necessary
+}
+
+// Define the Comment interface (if needed)
+interface Comment {
+  _id: string;
+  content: string;
+  createdAt: string;
+}
+
+
 interface FeedProps {
   searchQuery: string
 }
@@ -16,50 +33,92 @@ interface FeedProps {
 export default function Feed({ searchQuery }: FeedProps) {
   const [postText, setPostText] = useState("")
   const navigate = useNavigate();
-  const [posts, setPosts] = useState([])
+  const [posts, setPosts] = useState<Post[]>([]);
   const [commentText, setCommentText] = useState("")
-  const [filteredPosts, setFilteredPosts] = useState([])
   const [activePostId, setActivePostId] = useState<string | null>(null)
   const [reloadTrigger, setReloadTrigger] = useState(false)
   const [activeTab, setActiveTab] = useState('all')
-  const [newPosts, setNewPosts] = useState([]);
-  const [hotPosts, setHotPosts] = useState([]);
-  const [allPosts, setAllPosts] = useState([]);
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
+  const [hotPosts, setHotPosts] = useState<Post[]>([]);
+  const [newPosts, setNewPosts] = useState<Post[]>([]);
   const [shortNames, setShortNames] = useState<{ [key: string]: string }>({});
 
   const generateAvatarUrl = (seed: string) => {
     return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`
   }
 
+  // useEffect(() => {
+  //   const fetchPosts = async () => {
+  //     try {
+  //       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts`);
+  //       let sortedPosts = response.data;
+  //       setAllPosts(sortedPosts);
+  //       const currentTime = new Date().getTime();
+  //       const oneDayAgo = currentTime - 24 * 60 * 60 * 1000;
+  //       setHotPosts(sortedPosts.filter((post: any) => post.likes.length >= 3));
+  //       //sortedPosts.sort((a: any, b: any) => b.likes.length - a.likes.length);
+  //       setNewPosts(sortedPosts.filter((post: any) => new Date(post.createdAt).getTime() >= oneDayAgo));
+
+  //       if (activeTab === 'hot') {
+  //         sortedPosts = sortedPosts.filter((post: any) => post.likes.length >= 3);
+  //         sortedPosts.sort((a: any, b: any) => b.likes.length - a.likes.length);
+  //       } else if (activeTab === 'new') {
+  //         sortedPosts = sortedPosts.filter((post: any) => new Date(post.createdAt).getTime() >= oneDayAgo);
+  //         sortedPosts.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  //       }
+
+
+  //       setPosts(sortedPosts);
+  //     } catch (err) {
+  //       console.error('Error fetching posts:', err);
+  //     }
+  //   };
+
+  //   fetchPosts();
+  // }, [reloadTrigger, activeTab]);
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts`);
-        let sortedPosts = response.data;
+        const sortedPosts = response.data;
+
         setAllPosts(sortedPosts);
+        setHotPosts(sortedPosts.filter((post:any) => post.likes.length >= 3));
+        
         const currentTime = new Date().getTime();
         const oneDayAgo = currentTime - 24 * 60 * 60 * 1000;
-        setHotPosts(sortedPosts.filter((post: any) => post.likes.length >= 3));
-        sortedPosts.sort((a: any, b: any) => b.likes.length - a.likes.length);
-        setNewPosts(sortedPosts.filter((post: any) => new Date(post.createdAt).getTime() >= oneDayAgo));
-
-        if (activeTab === 'hot') {
-          sortedPosts = sortedPosts.filter((post: any) => post.likes.length >= 3);
-          sortedPosts.sort((a: any, b: any) => b.likes.length - a.likes.length);
-        } else if (activeTab === 'new') {
-          sortedPosts = sortedPosts.filter((post: any) => new Date(post.createdAt).getTime() >= oneDayAgo);
-          sortedPosts.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        }
-
-
-        setPosts(sortedPosts);
+        setNewPosts(sortedPosts.filter((post:any) => new Date(post.createdAt).getTime() >= oneDayAgo));
+        filterPosts(sortedPosts);
       } catch (err) {
         console.error('Error fetching posts:', err);
       }
     };
-
+  
     fetchPosts();
-  }, [reloadTrigger, activeTab]);
+  }, [reloadTrigger]); 
+  
+
+  const filterPosts = (posts:any) => {
+    let sortedPosts = [...posts];
+  
+    if (activeTab === 'hot') {
+      sortedPosts = sortedPosts.filter((post) => post.likes.length >= 3);
+      sortedPosts.sort((a, b) => b.likes.length - a.likes.length);
+    } else if (activeTab === 'new') {
+      const currentTime = new Date().getTime();
+      const oneDayAgo = currentTime - 24 * 60 * 60 * 1000;
+      sortedPosts = sortedPosts.filter((post) => new Date(post.createdAt).getTime() >= oneDayAgo);
+      sortedPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+  
+    setPosts(sortedPosts); 
+  };
+  
+  useEffect(() => {
+    filterPosts(allPosts); 
+  }, [activeTab, allPosts]);
 
   useEffect(() => {
     const filtered = posts.filter((post: any) =>
@@ -133,17 +192,26 @@ export default function Feed({ searchQuery }: FeedProps) {
 
 
   useEffect(() => {
-    // Generate a unique name for each post only once (when component mounts)
-    const names: { [key: string]: string } = {};
-    filteredPosts.forEach((post: any) => {
-      names[post._id] = uniqueNamesGenerator(customConfig); // For post name
-
-      post.comments.forEach((comment: any) => {
-        names[comment._id] = uniqueNamesGenerator(customConfig); // For comment name
+    
+    if (filteredPosts.length > 0) {
+      const newNames: { [key: string]: string } = { ...shortNames }; 
+  
+      filteredPosts.forEach((post: any) => {
+       
+        if (!newNames[post._id]) {
+          newNames[post._id] = uniqueNamesGenerator(customConfig); 
+        }
+  
+        post.comments.forEach((comment: any) => {
+         
+          if (!newNames[comment._id]) {
+            newNames[comment._id] = uniqueNamesGenerator(customConfig); 
+          }
+        });
       });
-    });
-    setShortNames(names);
-  }, [filteredPosts]);
+      setShortNames(newNames);
+    }
+  }, [filteredPosts]); 
 
   return (
     <>
