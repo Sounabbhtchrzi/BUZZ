@@ -3,20 +3,21 @@ import { createPost , getPosts} from '../controllers/postController.js';
 import { addComment, likePost } from '../controllers/likeController.js';
 import { createThemePost , getThemePosts , likeThemePost , addThemeComment, clearPreviousPosts } from '../controllers/themeController.js';
 import { submitFeedback } from '../controllers/feedbackController.js';
+import cookieMiddleware from '../middleware/cookieMiddleware.js';
 
 const router = express.Router();
 
 router.get('/',getPosts); 
-router.post('/create', createPost); 
+router.post('/create',cookieMiddleware, createPost); 
 
-router.post('/like/:postId', likePost);
-router.post('/comment/:postId', addComment);
+router.post('/like/:postId',cookieMiddleware, likePost);
+router.post('/comment/:postId',cookieMiddleware, addComment);
 
 router.get('/theme',getThemePosts);
-router.post('/theme/create', createThemePost);
-router.post('/theme/like/:postId',likeThemePost);
-router.post('/theme/comment/:postId',addThemeComment);
-router.delete('/theme/clear',clearPreviousPosts);
+router.post('/theme/create',cookieMiddleware, createThemePost);
+router.post('/theme/like/:postId',cookieMiddleware,likeThemePost);
+router.post('/theme/comment/:postId',cookieMiddleware,addThemeComment);
+router.delete('/theme/clear',cookieMiddleware,clearPreviousPosts);
 router.post('/feedback', submitFeedback);
 
 export default router;
