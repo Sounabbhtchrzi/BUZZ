@@ -259,7 +259,7 @@ export default function Feed({ searchQuery }: FeedProps) {
             <button
               type="button"
               onClick={() => setShowEmojiPicker((prev) => !prev)}
-              className="absolute left-3 bottom-3 p-2 text-orange-500 rounded-lg hover:bg-gray-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="absolute left-3 bottom-3 p-2 text-orange-500 rounded-lg hover:bg-gray-200 transition-all duration-300 md:block hidden focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <Smile size={24} />
             </button>
@@ -394,7 +394,7 @@ export default function Feed({ searchQuery }: FeedProps) {
                       <button
                         type="button"
                         onClick={() => setShowCommentEmojiPicker((prev) => !prev)}
-                        className="absolute left-3 bottom-3 p-2 text-orange-500 rounded-lg hover:bg-gray-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="absolute left-3 bottom-3 p-2 text-orange-500 rounded-lg hover:bg-gray-200 transition-all duration-300 md:block hidden focus:outline-none focus:ring-2 focus:ring-orange-500"
                       >
                         <Smile size={24} />
                       </button>
