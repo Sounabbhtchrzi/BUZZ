@@ -137,7 +137,7 @@ export default function FunkyFeedbackForm() {
         </div>
         <div>
           <label className="block text-orange-500 font-semibold mb-2" htmlFor="email">
-            Email <span className="text-red-500">*</span>
+            Email 
           </label>
           <input
             id="email"
@@ -149,7 +149,7 @@ export default function FunkyFeedbackForm() {
           />
         </div>
         <div className="col-span-2">
-          <label className="block text-orange-500 font-semibold mb-2" htmlFor="message">Your Funky Feedback</label>
+          <label className="block text-orange-500 font-semibold mb-2" htmlFor="message">Your Funky Feedback<span className="text-red-500">*</span></label>
           <textarea
             id="message"
             value={message}
