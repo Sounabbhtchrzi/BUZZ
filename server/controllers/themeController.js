@@ -27,9 +27,6 @@ export const getThemePosts = async (req, res, next) => {
       const endOfDay = new Date();
       endOfDay.setUTCHours(23, 59, 59, 999); // Set to the last millisecond of the day in UTC
 
-      console.log("Start of day (UTC):", startOfDay);
-      console.log("End of day (UTC):", endOfDay);
-
       const posts = await ThemePost.find({
           createdAt: {
               $gte: startOfDay,

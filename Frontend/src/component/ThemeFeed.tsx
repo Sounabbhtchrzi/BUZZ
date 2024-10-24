@@ -5,6 +5,10 @@ import ShareButton from "./Sharebutton"
 import ScrollToTopButton from "./ScrollTotop";
 import { toast } from "react-toastify";
 import { uniqueNamesGenerator, Config, adjectives, animals } from 'unique-names-generator';
+import EmojiPicker from 'emoji-picker-react';
+import { Smile,Send } from "lucide-react";
+
+
 
 // Define the Post interface
 interface Post {
@@ -40,6 +44,9 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
   const [hotPosts, setHotPosts] = useState([]);
   const [allPosts, setAllPosts] = useState([]);
   const [shortNames, setShortNames] = useState<{ [key: string]: string }>({});
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showCommentEmojiPicker,setShowCommentEmojiPicker]=useState(false);
+ // const [isLoading, setIsLoading] = useState(false);
 
   const generateAvatarUrl = (seed: string) => {
     return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`;
@@ -47,6 +54,7 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
 
   useEffect(() => {
     const fetchPosts = async () => {
+      //setIsLoading(true);
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts/theme`);
         const sortedPosts = response.data;
@@ -60,6 +68,8 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
         filterPosts(sortedPosts);
       } catch (err) {
         console.error('Error fetching posts:', err);
+      }finally {
+       // setIsLoading(false);
       }
     };
   
@@ -204,6 +214,15 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
     setActivePostId((prev) => (prev === postId ? null : postId));
   };
 
+  const onEmojiClick = (emojiObject: any) => {
+    setPostText((prevText) => prevText + emojiObject.emoji);
+  };
+
+  const onCommentEmojiClick = (emojiObject:any) => {
+    setCommentText((prevText) => prevText + emojiObject.emoji);
+  };
+
+
   return (
     <>
     <main className="lg:w-1/2 w-11/12 space-y-6">
@@ -211,19 +230,50 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
       <h2 className="text-3xl font-bold text-orange-600 text-center mb-4">
         Today's theme is: <span className="text-purple-500">{currentTheme || "Loading..."}</span>
       </h2>
-      <form onSubmit={createPost}>
-        <textarea
-          placeholder={`What do you think about ${currentTheme}? 🤪`}
-          className="w-full p-3 h-20 rounded bg-gray-100 border border-orange-300 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none text-lg"
-          value={postText}
-          onChange={(e) => setPostText(e.target.value)}
-        />
-        <div className="flex justify-center lg:justify-end mt-4 ">
-          <button className="bg-orange-500 text-white px-6 py-2 rounded-full font-bold text-lg hover:bg-orange-600 transition-colors">
-            Post It! 🔥
-          </button>
-        </div>
-      </form>
+      <form
+          onSubmit={createPost}
+          className="space-y-4"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              createPost(e);
+            }
+          }}
+        >
+          <div className="relative">
+            <textarea
+              placeholder="What's on your funky mind? 🤪"
+              className="w-full p-4 pr-16 h-24 rounded-xl bg-gray-100 border-2 border-orange-300 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-lg transition-all duration-300"
+              value={postText}
+              onChange={(e) => setPostText(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="absolute right-3 bottom-3 p-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transform hover:scale-105"
+              disabled={!postText.trim()}
+            >
+              <Send size={24} className="animate-pulse" />
+            </button>
+
+            {/* Emoji picker toggle button */}
+            <button
+              type="button"
+              onClick={() => setShowEmojiPicker((prev) => !prev)}
+              className="absolute left-3 bottom-3 p-2 text-orange-500 rounded-lg hover:bg-gray-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              <Smile size={24} />
+            </button>
+
+            {/* Show emoji picker below textarea */}
+            {showEmojiPicker && (
+              <div className="absolute left-0 mt-2 z-50 w-64 md:block hidden">
+                <EmojiPicker onEmojiClick={onEmojiClick} />
+              </div>
+            )}
+          </div>
+
+        </form>
+
     </div>
   
     <Tabs 
@@ -234,7 +284,8 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
       hotPostsCount={hotPosts.length}
       allPostsCount={allPosts.length} 
     />
-  
+    
+      
     {filteredPosts.length > 0 ? (
       filteredPosts.map((post: Post) => (
         <div key={post._id} className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300">
@@ -269,7 +320,7 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
               </button>
           </div>
   
-          <p className="text-xl mb-4">{post.content}🐶✨</p>
+          <p className="text-xl mb-4">{post.content}</p>
 
           <dialog id={`share_modal_${post._id}`} className="modal rounded-xl border-4 border-orange-400">
 
@@ -305,19 +356,52 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
   
           {activePostId === post._id && (
             <div className="mt-6 bg-orange-50 rounded-lg p-4">
-              <textarea
-                className="w-full p-3 border-2 border-orange-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent transition duration-200"
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Write a comment..."
-                rows={3}
-              />
-              <button
-                className="mt-2 bg-orange-500 text-white px-6 py-2 rounded-full font-bold hover:bg-orange-600 transition-colors duration-200 shadow-md hover:shadow-lg"
-                onClick={() => postComment(post._id)}
-              >
-                Post Comment
-              </button>
+             <div
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault(); 
+                        postComment(post._id); 
+                      }
+                    }}
+                  >
+                    <div className="relative">
+                      <textarea
+                        className="w-full p-3 border-2 border-orange-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent transition duration-200 resize-none"
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        placeholder="Write a comment..."
+                        rows={3}
+                      />
+                      
+                      {/* Emoji picker toggle button */}
+                      <button
+                        type="button"
+                        onClick={() => setShowCommentEmojiPicker((prev) => !prev)}
+                        className="absolute left-3 bottom-3 p-2 text-orange-500 rounded-lg hover:bg-gray-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      >
+                        <Smile size={24} />
+                      </button>
+
+                      {/* Show emoji picker */}
+                      {showCommentEmojiPicker && (
+                        <div className="absolute left-0 bottom-12 mt-2 z-100 w-22 md:block hidden"> 
+                          <EmojiPicker
+                            onEmojiClick={onCommentEmojiClick}
+                            className="w-14" 
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <button
+                      className="mt-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-full font-bold hover:from-orange-500 hover:to-pink-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+                      onClick={() => postComment(post._id)}
+                    >
+                      Post Comment
+                    </button>
+                  </div>
+
+
   
               <div className="mt-6 space-y-4">
                     {post.comments.map((comment: any) => (
@@ -353,6 +437,7 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
         <h3 className="text-xl">No posts available for today. Be the first to share!</h3>
       </div>
     )}
+    
   </main>
   <ScrollToTopButton />
   </>
