@@ -228,7 +228,7 @@ const ThemeFeed = ({searchQuery}:ThemeFeedProps) => {
     <main className="lg:w-1/2 w-11/12 space-y-6">
     <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300">
       <h2 className="text-3xl font-bold text-orange-600 text-center mb-4">
-        Today's theme is: <span className="text-purple-500">{currentTheme || "Loading..."}</span>
+        Today's theme is: <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 animate-gradient-x">{currentTheme || "Loading..."}</span>
       </h2>
       <form
           onSubmit={createPost}

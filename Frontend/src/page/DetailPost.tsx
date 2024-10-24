@@ -6,6 +6,8 @@ import Navbar from "../component/Navbar";
 import ShareButton from "../component/Sharebutton";
 import ScrollToTopButton from "../component/ScrollTotop";
 import { uniqueNamesGenerator, Config, adjectives, animals } from "unique-names-generator"; // Import uniqueNamesGenerator
+import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 interface Comment {
     _id: string;
     content: string;
@@ -33,7 +35,7 @@ const DetailPost = () => {
     const [reloadTrigger, setReloadTrigger] = useState(false);
     // const [posts, setPosts] = useState([]);
     const [searchQuery, setSearchQuery] = useState<string>("")
-   
+
 
     const generateAvatarUrl = (seed: string) => {
         return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`;
@@ -62,7 +64,7 @@ const DetailPost = () => {
                 const posts: Post[] = response.data; // Assuming your API returns an array of posts
                 const post = posts.find((p) => p._id === id);
                 setPost(post || null); // Set to null if not found
-                
+
             } catch (err) {
                 console.error('Error fetching posts:', err);
             }
@@ -146,6 +148,8 @@ const DetailPost = () => {
 
                 {/* Main feed */}
                 <div className="mt-24 w-full flex flex-col items-center">
+                    <div className=" w-full lg:w-1/2 flex justify-start "><Link to='/' className="text-orange-400 flex justify-between gap-3 font-semibold  rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"><ArrowLeft/> Back to Home </Link>
+                    </div>
                     {post ? (
                         <div key={post._id} className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300 cursor-pointer w-full lg:w-1/2">
                             <div className="flex justify-between items-center mb-4">

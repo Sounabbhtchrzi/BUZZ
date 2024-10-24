@@ -1,6 +1,8 @@
 import Navbar from "../component/Navbar"
 import { useState, useEffect } from "react"
 import ThemeFeed from "../component/ThemeFeed"
+import { Link } from "react-router-dom"
+import { ArrowLeft } from "lucide-react"
 
 const ThemesPage= () => {
 
@@ -54,6 +56,7 @@ const ThemesPage= () => {
 
         {/* Main feed with added top margin to account for fixed navbar */}
         <div className="mt-24 w-full flex flex-col items-center">
+        <div className="w-full lg:w-1/2 flex justify-start "><Link to='/' className="text-orange-400 flex justify-between gap-3 font-semibold  rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"><ArrowLeft/> Back to Home </Link></div>
           <ThemeFeed searchQuery={searchQuery}/>
         
         </div>
