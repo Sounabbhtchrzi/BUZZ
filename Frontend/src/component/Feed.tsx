@@ -2,13 +2,16 @@ import { useState, useEffect } from "react"
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
 import { Link } from "react-router-dom"
-import { Sparkles, Send } from "lucide-react"
+import { Sparkles, Send, Smile } from "lucide-react"
 import Tabs from "./Tab"
 import ShareButton from "./Sharebutton"
 import ScrollToTopButton from "./ScrollTotop";
 import Feedbackbutton from "./Feedbackbutton";
 import { toast } from "react-toastify";
 import { uniqueNamesGenerator, Config, adjectives, animals } from 'unique-names-generator';
+import EmojiPicker from 'emoji-picker-react';
+
+
 
 interface Post {
   _id: string;
@@ -43,6 +46,8 @@ export default function Feed({ searchQuery }: FeedProps) {
   const [hotPosts, setHotPosts] = useState<Post[]>([]);
   const [newPosts, setNewPosts] = useState<Post[]>([]);
   const [shortNames, setShortNames] = useState<{ [key: string]: string }>({});
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showCommentEmojiPicker,setShowCommentEmojiPicker]=useState(false);
 
   const generateAvatarUrl = (seed: string) => {
     return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`
@@ -213,40 +218,77 @@ export default function Feed({ searchQuery }: FeedProps) {
     }
   }, [filteredPosts]); 
 
+  const onEmojiClick = (emojiObject: any) => {
+    setPostText((prevText) => prevText + emojiObject.emoji);
+  };
+
+  const onCommentEmojiClick = (emojiObject:any) => {
+    setCommentText((prevText) => prevText + emojiObject.emoji);
+  };
+
   return (
     <>
       <main className="lg:w-1/2 w-11/12 space-y-6">
         <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-orange-300 transition-all duration-300 hover:shadow-xl">
-          <form onSubmit={createPost} className="space-y-4">
-            <div className="relative">
-              <textarea
-                placeholder="What's on your funky mind? 🤪"
-                className="w-full p-4 pr-16 h-24 rounded-xl bg-gray-100 border-2 border-orange-300 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-lg transition-all duration-300"
-                value={postText}
-                onChange={(e) => setPostText(e.target.value)}
-              />
-              <button
-                type="submit"
-                className="absolute right-3 bottom-3 p-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transform hover:scale-105"
-                disabled={!postText.trim()}
-              >
-                <Send size={24} className="animate-pulse" />
-              </button>
-            </div>
-            <div className="flex lg:justify-between justify-center items-center">
-              <button
-                type="button"
-                onClick={() => {
-                  navigate('/theme')
-                }}
-                className="px-4 py-2 bg-gradient-to-r from-purple-400 to-indigo-500 text-white rounded-full font-semibold text-sm hover:from-purple-500 hover:to-indigo-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 flex items-center space-x-2 transform hover:scale-105 hover:rotate-3"
-              >
-                <Sparkles size={16} className="animate-spin-slow" />
-                <span>Explore Themes</span>
-              </button>
-              <p className="text-sm text-gray-500 italic animate-bounce hidden lg:block">Share your thoughts with the world!</p>
-            </div>
-          </form>
+        <form
+          onSubmit={createPost}
+          className="space-y-4"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              createPost(e);
+            }
+          }}
+        >
+          <div className="relative">
+            <textarea
+              placeholder="What's on your funky mind? 🤪"
+              className="w-full p-4 pr-16 h-24 rounded-xl bg-gray-100 border-2 border-orange-300 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-lg transition-all duration-300"
+              value={postText}
+              onChange={(e) => setPostText(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="absolute right-3 bottom-3 p-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transform hover:scale-105"
+              disabled={!postText.trim()}
+            >
+              <Send size={24} className="animate-pulse" />
+            </button>
+
+            {/* Emoji picker toggle button */}
+            <button
+              type="button"
+              onClick={() => setShowEmojiPicker((prev) => !prev)}
+              className="absolute left-3 bottom-3 p-2 text-orange-500 rounded-lg hover:bg-gray-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              <Smile size={24} />
+            </button>
+
+            {/* Show emoji picker below textarea */}
+            {showEmojiPicker && (
+              <div className="absolute left-0 mt-2 z-50 w-64 md:block hidden">
+                <EmojiPicker onEmojiClick={onEmojiClick} />
+              </div>
+            )}
+          </div>
+
+          <div className="flex lg:justify-between justify-center items-center">
+            <button
+              type="button"
+              onClick={() => {
+                navigate('/theme');
+              }}
+              className="px-4 py-2 bg-gradient-to-r from-purple-400 to-indigo-500 text-white rounded-full font-semibold text-sm hover:from-purple-500 hover:to-indigo-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 flex items-center space-x-2 transform hover:scale-105 hover:rotate-3"
+            >
+              <Sparkles size={16} className="animate-spin-slow" />
+              <span>Explore Themes</span>
+            </button>
+            <p className="text-sm text-gray-500 italic animate-bounce hidden lg:block">
+              Share your thoughts with the world!
+            </p>
+          </div>
+        </form>
+
         </div>
 
         <Tabs activeTab={activeTab}
@@ -331,19 +373,52 @@ export default function Feed({ searchQuery }: FeedProps) {
 
               {activePostId === post._id && (
                 <div className="mt-6 bg-orange-50 rounded-xl p-4">
-                  <textarea
-                    className="w-full p-3 border-2 border-orange-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent transition duration-200 resize-none"
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    placeholder="Write a comment..."
-                    rows={3}
-                  />
-                  <button
-                    className="mt-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-full font-bold hover:from-orange-500 hover:to-pink-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
-                    onClick={() => postComment(post._id)}
+                 <div
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault(); // Prevent adding a new line
+                        postComment(post._id); // Trigger the postComment function
+                      }
+                    }}
                   >
-                    Post Comment
-                  </button>
+                    <div className="relative">
+                      <textarea
+                        className="w-full p-3 border-2 border-orange-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent transition duration-200 resize-none"
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        placeholder="Write a comment..."
+                        rows={3}
+                      />
+                      
+                      {/* Emoji picker toggle button */}
+                      <button
+                        type="button"
+                        onClick={() => setShowCommentEmojiPicker((prev) => !prev)}
+                        className="absolute left-3 bottom-3 p-2 text-orange-500 rounded-lg hover:bg-gray-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      >
+                        <Smile size={24} />
+                      </button>
+
+                      {/* Show emoji picker */}
+                      {showCommentEmojiPicker && (
+                        <div className="absolute left-0 bottom-12 mt-2 z-100 w-22 md:block hidden"> 
+                          <EmojiPicker
+                            onEmojiClick={onCommentEmojiClick}
+                            className="w-14" 
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <button
+                      className="mt-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-full font-bold hover:from-orange-500 hover:to-pink-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+                      onClick={() => postComment(post._id)}
+                    >
+                      Post Comment
+                    </button>
+                  </div>
+
+
 
                   <div className="mt-6 space-y-4">
                     {post.comments.map((comment: any) => (
