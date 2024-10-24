@@ -22,24 +22,26 @@ export const createThemePost = async (req, res, next) => {
 export const getThemePosts = async (req, res, next) => {
   try {
       const startOfDay = new Date();
-      startOfDay.setHours(0, 0, 0, 0); // Set to midnight
+      startOfDay.setUTCHours(0, 0, 0, 0); // Set to midnight in UTC
 
       const endOfDay = new Date();
-      endOfDay.setHours(23, 59, 59, 999); // Set to the last millisecond of the day
+      endOfDay.setUTCHours(23, 59, 59, 999); // Set to the last millisecond of the day in UTC
 
-      // Fetch posts created within the current day
+      console.log("Start of day (UTC):", startOfDay);
+      console.log("End of day (UTC):", endOfDay);
+
       const posts = await ThemePost.find({
           createdAt: {
               $gte: startOfDay,
               $lte: endOfDay,
           },
       });
+
       res.status(200).json(posts);
   } catch (error) {
       next(error);
   }
 };
-
 
 
 export const likeThemePost = async (req, res) => {
