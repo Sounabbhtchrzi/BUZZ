@@ -33,7 +33,7 @@ export default function Component() {
     }
   }, [])
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-orange-100 font-sans relative overflow-hidden flex justify-center items-center gap-3">
+    <div className="min-h-screen w-full bg-gradient-to-br from-white to-orange-100 font-sans relative overflow-hidden flex justify-center items-center gap-3">
       {/* Emoji Background */}
       <div className="absolute inset-0 opacity-10 flex flex-wrap justify-center items-center pointer-events-none">
         {backgroundEmojis.map((emoji, index) => (
@@ -43,17 +43,17 @@ export default function Component() {
 
 
 
-      <div className="container mx-auto p-6 flex flex-col justify-center items-center gap-3 relative z-10">
+      <div className="container mx-auto lg:p-6 p-0  flex flex-col justify-center items-center gap-3 relative z-10">
         {/* Fixed Navbar */}
         <div
-          className={`fixed left-0 right-0 z-50 flex justify-center items-center transition-all duration-300 ${isScrolled ? 'top-0' : 'top-6'
+          className={`fixed left-0 right-0 z-50 flex justify-center items-center transition-all duration-300  ${isScrolled ? 'top-0' : 'top-6'
             }`}
         >
           <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         </div>
 
         {/* Main feed with added top margin to account for fixed navbar */}
-        <div className="mt-24 w-full flex flex-col items-center">
+        <div className="lg:mt-24 mt-28 w-full flex flex-col items-center">
           <Feed searchQuery={searchQuery}/>
           {/* <Tabs /> */}
         </div>
