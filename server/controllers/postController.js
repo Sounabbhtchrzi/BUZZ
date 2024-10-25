@@ -49,9 +49,6 @@ export const createPost = async (req, res, next) => {
     // Analyze the content for toxicity
     try {
         const scores = await analyzeComment(content);
-
- // Set relaxed thresholds for each attribute
-
          if (
             scores.toxicityScore > 0.5 ||
             scores.severeToxicityScore > 0.3 ||
