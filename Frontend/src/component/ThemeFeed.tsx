@@ -166,8 +166,11 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
         console.log("Failed to create theme post.");
       }
     } catch (err) {
-      console.log("Error occurred while creating theme post.");
-    }
+      const errorMessage = axios.isAxiosError(err) && err.response?.data?.message ? err.response.data.message : "An error occurred";
+      toast.error(errorMessage, {
+        style: { backgroundColor: '#FF6B6B', color: 'white' },
+      });
+      setPostText('');    }
   };
 
   const handleLike = async (id: string) => {
@@ -202,6 +205,7 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
       toast.info(response.data);
       setActivePostId(null);
       setCommentText("");
+      toast.info(response.data.message);
       setReloadTrigger((prev) => !prev);
     } catch (err) {
       console.error("Error adding comment:", err);
