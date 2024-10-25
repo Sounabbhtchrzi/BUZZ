@@ -4,6 +4,7 @@ import { addComment, likePost } from '../controllers/likeController.js';
 import { createThemePost , getThemePosts , likeThemePost , addThemeComment, clearPreviousPosts } from '../controllers/themeController.js';
 import { submitFeedback } from '../controllers/feedbackController.js';
 import cookieMiddleware from '../middleware/cookieMiddleware.js';
+import { groqMessage } from '../controllers/aiController.js';
 
 const router = express.Router();
 
@@ -19,5 +20,7 @@ router.post('/theme/like/:postId',cookieMiddleware,likeThemePost);
 router.post('/theme/comment/:postId',cookieMiddleware,addThemeComment);
 router.delete('/theme/clear',cookieMiddleware,clearPreviousPosts);
 router.post('/feedback', submitFeedback);
+
+router.get('/aimessage',groqMessage);
 
 export default router;
