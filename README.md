@@ -2,6 +2,10 @@
 
 Buzz is a social platform where users can post anonymously, engage through likes and comments, and explore new daily themes. Every day, Buzz introduces a fresh theme, encouraging users to share ideas and spark creative conversations.
 
+[![Screenshot-2024-10-25-210813.png](https://i.postimg.cc/P5SBkHSX/Screenshot-2024-10-25-210813.png)](https://postimg.cc/cv8DQpq2)
+
+Visit the site here - [BUZZ](https://buzz-s3.vercel.app/)
+
 ## Features
 
 - **Anonymous Posting**: Share your thoughts without revealing your identity.
