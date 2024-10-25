@@ -171,6 +171,16 @@ export default function Feed({ searchQuery }: FeedProps) {
     }
   }
 
+  const handleGenerate = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts/aimessage`);
+      setPostText(response.data.result);
+      //console.log(response.data.result);
+    } catch (error) {
+      console.error("Error generating text:", error);
+    }
+  };
+
   const postComment = async (postId: string) => {
     if (!commentText.trim()) return
 
@@ -244,37 +254,49 @@ export default function Feed({ searchQuery }: FeedProps) {
               }
             }}
           >
-            <div className="relative">
-              <textarea
-                placeholder="What's on your funky mind? 🤪"
-                className="w-full p-4 pr-16 h-24 rounded-xl bg-gray-100 border-2 border-orange-300 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-lg transition-all duration-300"
-                value={postText}
-                onChange={(e) => setPostText(e.target.value)}
-              />
-              <button
-                type="submit"
-                className="absolute right-3 bottom-3 p-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transform hover:scale-105"
-                disabled={!postText.trim()}
-              >
-                <Send size={24} className="animate-pulse" />
-              </button>
+           <div className="relative">
+            <textarea
+              placeholder="What's on your funky mind? 🤪"
+              className="w-full p-4 pr-36 h-24 rounded-xl bg-gray-100 border-2 border-orange-300 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-lg transition-all duration-300"
+              value={postText}
+              onChange={(e) => setPostText(e.target.value)}
+            />
 
-              {/* Emoji picker toggle button */}
-              <button
-                type="button"
-                onClick={() => setShowEmojiPicker((prev) => !prev)}
-                className="absolute left-3 bottom-3 p-2 text-orange-500 rounded-lg hover:bg-gray-200 transition-all duration-300 md:block hidden focus:outline-none focus:ring-2 focus:ring-orange-500"
-              >
-                <Smile size={24} />
-              </button>
+            {/* Generate with AI button */}
+            <button
+              onClick={handleGenerate}
+              className="absolute right-16 bottom-3 p-2 bg-gradient-to-r from-blue-400 to-blue-500 text-white rounded-lg hover:from-blue-500 hover:to-blue-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Generate with AI
+            </button>
 
-              {/* Show emoji picker below textarea */}
-              {showEmojiPicker && (
-                <div className="absolute left-0 mt-2 z-50 w-64 md:block hidden">
-                  <EmojiPicker onEmojiClick={onEmojiClick} />
-                </div>
-              )}
-            </div>
+            {/* Send button */}
+            <button
+              type="submit"
+              className="absolute right-3 bottom-3 p-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transform hover:scale-105"
+              disabled={!postText.trim()}
+            >
+              <Send size={24} className="animate-pulse" />
+            </button>
+
+            {/* Emoji picker toggle button */}
+            <button
+              type="button"
+              onClick={() => setShowEmojiPicker((prev) => !prev)}
+              className="absolute left-3 bottom-3 p-2 text-orange-500 rounded-lg hover:bg-gray-200 transition-all duration-300 md:block hidden focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              <Smile size={24} />
+            </button>
+
+            {/* Show emoji picker below textarea */}
+            {showEmojiPicker && (
+              <div className="absolute left-0 mt-2 z-50 w-64 md:block hidden">
+                <EmojiPicker onEmojiClick={onEmojiClick} />
+              </div>
+            )}
+          </div>
+
+
 
             <div className="flex lg:justify-between justify-center items-center">
               <button
