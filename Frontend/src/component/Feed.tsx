@@ -135,8 +135,10 @@ export default function Feed({ searchQuery }: FeedProps) {
   const createPost = async (event: React.FormEvent) => {
     event.preventDefault()
     if (!postText.trim()) return
+    let response;
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/posts/create`, { content: postText }, { withCredentials: true })
+       response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/posts/create`, { content: postText }, { withCredentials: true })
+      console.log(response.data);
       if (response.status === 201) {
         console.log(response.data)
         setPostText('')
@@ -144,17 +146,13 @@ export default function Feed({ searchQuery }: FeedProps) {
         toast.success("Post done Sucessfully", {
           style: { backgroundColor: 'green', color: 'white' }, // Custom inline styles
         });
-      } else if (response.status === 400) {
-          toast.error("Can't post this text ",{
-            style: { backgroundColor: 'reed', color: 'white' }, // Custom inline styles
-          })
-          setPostText('');
-      }
-      else {
-        console.log('Failed to create post.')
       }
     } catch (err) {
-      console.log('Error occurred while creating post.')
+      const errorMessage = axios.isAxiosError(err) && err.response?.data?.message ? err.response.data.message : "An error occurred";
+        toast.error(errorMessage, {
+            style: { backgroundColor: '#FF6B6B', color: 'white' },
+        });
+        setPostText('');
     }
   }
 
