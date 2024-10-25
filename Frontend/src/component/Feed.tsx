@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
 import { Link } from "react-router-dom"
-import { Sparkles, Send, Smile } from "lucide-react"
+import { Sparkles, Send, Smile,Loader } from "lucide-react"
 import Tabs from "./Tab"
 import ShareButton from "./Sharebutton"
 import ScrollToTopButton from "./ScrollTotop";
@@ -48,6 +48,7 @@ export default function Feed({ searchQuery }: FeedProps) {
   const [shortNames, setShortNames] = useState<{ [key: string]: string }>({});
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showCommentEmojiPicker, setShowCommentEmojiPicker] = useState(false);
+  const [isLoading,setIsLoading] = useState(false);
 
   const generateAvatarUrl = (seed: string) => {
     return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`
@@ -85,6 +86,7 @@ export default function Feed({ searchQuery }: FeedProps) {
 
   useEffect(() => {
     const fetchPosts = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts`);
         const sortedPosts = response.data;
@@ -98,6 +100,8 @@ export default function Feed({ searchQuery }: FeedProps) {
         filterPosts(sortedPosts);
       } catch (err) {
         console.error('Error fetching posts:', err);
+      }finally{
+        setIsLoading(false);
       }
     };
 
@@ -248,12 +252,6 @@ export default function Feed({ searchQuery }: FeedProps) {
           <form
             onSubmit={createPost}
             className="space-y-4"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                createPost(e);
-              }
-            }}
           >
             <div className="relative">
               <textarea
@@ -323,6 +321,7 @@ export default function Feed({ searchQuery }: FeedProps) {
           </form>
 
         </div>
+        
 
         <Tabs activeTab={activeTab}
           setActiveTab={setActiveTab}
@@ -331,7 +330,14 @@ export default function Feed({ searchQuery }: FeedProps) {
           hotPostsCount={hotPosts.length}
           allPostsCount={allPosts.length} />
 
-        {filteredPosts.length > 0 ? (
+        {isLoading?(
+          <div className="flex flex-col items-center mt-10">
+          <Loader className="text-orange-500 animate-spin" size={48} />
+          <p className="text-center text-lg text-gray-500 mt-4 animate-pulse">Loading posts...</p>
+        </div>
+        ):(
+
+        filteredPosts.length > 0 ? (
 
           filteredPosts.map((post: any) => {
 
@@ -406,14 +412,7 @@ export default function Feed({ searchQuery }: FeedProps) {
 
               {activePostId === post._id && (
                 <div className="mt-6 bg-orange-50 rounded-xl lg:p-4 p-2">
-                  <div
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault(); // Prevent adding a new line
-                        postComment(post._id); // Trigger the postComment function
-                      }
-                    }}
-                  >
+                  
                     <div className="relative">
                       <textarea
                         className="w-full p-3 border-2 border-orange-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent transition duration-200 resize-none"
@@ -449,7 +448,7 @@ export default function Feed({ searchQuery }: FeedProps) {
                     >
                       Post Comment
                     </button>
-                  </div>
+                  
 
 
 
@@ -487,6 +486,7 @@ export default function Feed({ searchQuery }: FeedProps) {
           })
         ) : (
           <p className="text-center text-lg text-gray-500 mt-10 animate-pulse">No posts available... Be the first to share!</p>
+        )
         )}
       </main>
       <ScrollToTopButton />

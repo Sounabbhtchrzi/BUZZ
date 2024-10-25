@@ -20,7 +20,7 @@ export default function Navbar({ searchQuery, setSearchQuery }:NavbarProps) {
   return (
     <header className="bg-white shadow-md p-4 lg:w-1/2 w-11/12 rounded-md flex items-center justify-between relative z-10">
       <Link to='/' className="group w-16 lg:w-32">
-        <h1 className="lg:text-4xl text-lg font-extrabold relative">
+        <h1 className="text-2xl sm:text-2xl lg:text-4xl text-lg font-extrabold relative">
           <span className="inline-block transform hover:scale-150 transition-transform duration-300 text-orange-500">B</span>
           <span className="inline-block transform hover:rotate-180 transition-transform duration-300 text-orange-600">U</span>
           <span className="inline-block transform hover:skew-y-12 transition-transform duration-300 text-orange-700">Z</span>
@@ -28,7 +28,7 @@ export default function Navbar({ searchQuery, setSearchQuery }:NavbarProps) {
         </h1>
       </Link>
 
-      <div className="flex-grow mx-4 flex justify-center items-center">
+      <div className="flex-grow mx-2 flex justify-center items-center">
         <div className="relative flex justify-center items-center w-full max-w-md">
           <input
             type="text"

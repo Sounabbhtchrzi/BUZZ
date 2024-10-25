@@ -6,7 +6,7 @@ import ScrollToTopButton from "./ScrollTotop";
 import { toast } from "react-toastify";
 import { uniqueNamesGenerator, Config, adjectives, animals } from 'unique-names-generator';
 import EmojiPicker from 'emoji-picker-react';
-import { Smile, Send } from "lucide-react";
+import { Smile, Send,Loader } from "lucide-react";
 
 
 
@@ -46,7 +46,7 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
   const [shortNames, setShortNames] = useState<{ [key: string]: string }>({});
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showCommentEmojiPicker, setShowCommentEmojiPicker] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const generateAvatarUrl = (seed: string) => {
     return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`;
@@ -54,7 +54,7 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      //setIsLoading(true);
+      setIsLoading(true);
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts/theme`);
         const sortedPosts = response.data;
@@ -69,7 +69,7 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
       } catch (err) {
         console.error('Error fetching posts:', err);
       } finally {
-        // setIsLoading(false);
+        setIsLoading(false);
       }
     };
 
@@ -242,12 +242,6 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
           <form
             onSubmit={createPost}
             className="space-y-4"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                createPost(e);
-              }
-            }}
           >
             <div className="relative">
               <textarea
@@ -293,8 +287,13 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
           allPostsCount={allPosts.length}
         />
 
-
-        {filteredPosts.length > 0 ? (
+        {isLoading?(
+          <div className="flex flex-col items-center mt-10">
+          <Loader className="text-orange-500 animate-spin" size={48} />
+          <p className="text-center text-lg text-gray-500 mt-4 animate-pulse">Loading posts...</p>
+        </div>
+        ):(
+        filteredPosts.length > 0 ? (
           filteredPosts.map((post: Post) => (
             <div key={post._id} className="bg-white rounded-lg shadow-lg lg:p-6 p-3 border-2 border-orange-300">
               <div className="flex justify-between items-center mb-4">
@@ -366,14 +365,8 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
 
               {activePostId === post._id && (
                 <div className="mt-6 bg-orange-50 rounded-lg p-4">
-                  <div
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        postComment(post._id);
-                      }
-                    }}
-                  >
+                 
+                  
                     <div className="relative">
                       <textarea
                         className="w-full p-3 border-2 border-orange-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent transition duration-200 resize-none"
@@ -409,7 +402,7 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
                     >
                       Post Comment
                     </button>
-                  </div>
+                  
 
 
 
@@ -469,6 +462,7 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
           <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300 text-center">
             <h3 className="text-xl">No posts available for today. Be the first to share!</h3>
           </div>
+        )
         )}
 
       </main>
