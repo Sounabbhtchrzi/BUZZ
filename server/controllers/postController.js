@@ -8,7 +8,7 @@ const API_KEY = process.env.PERSPECTIVE_API_KEY;
 const DISCOVERY_URL =
     'https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1';
 
-const analyzeComment = async (comment) => {
+export const analyzeComment = async (comment) => {
     const client = await google.discoverAPI(DISCOVERY_URL);
     
     const analyzeRequest = {
