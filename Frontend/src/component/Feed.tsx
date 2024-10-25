@@ -137,7 +137,7 @@ export default function Feed({ searchQuery }: FeedProps) {
     if (!postText.trim()) return
     let response;
     try {
-       response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/posts/create`, { content: postText }, { withCredentials: true })
+      response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/posts/create`, { content: postText }, { withCredentials: true })
       console.log(response.data);
       if (response.status === 201) {
         console.log(response.data)
@@ -149,10 +149,10 @@ export default function Feed({ searchQuery }: FeedProps) {
       }
     } catch (err) {
       const errorMessage = axios.isAxiosError(err) && err.response?.data?.message ? err.response.data.message : "An error occurred";
-        toast.error(errorMessage, {
-            style: { backgroundColor: '#FF6B6B', color: 'white' },
-        });
-        setPostText('');
+      toast.error(errorMessage, {
+        style: { backgroundColor: '#FF6B6B', color: 'white' },
+      });
+      setPostText('');
     }
   }
 
@@ -194,6 +194,7 @@ export default function Feed({ searchQuery }: FeedProps) {
       setActivePostId(null)
       setCommentText('')
       console.log(response.data.message)
+      toast.info(response.data.message);
       setReloadTrigger(!reloadTrigger)
     } catch (err) {
       console.error('Error adding comment:', err)
@@ -254,61 +255,67 @@ export default function Feed({ searchQuery }: FeedProps) {
               }
             }}
           >
-           <div className="relative">
-            <textarea
-              placeholder="What's on your funky mind? 🤪"
-              className="w-full p-4 pr-36 h-24 rounded-xl bg-gray-100 border-2 border-orange-300 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-lg transition-all duration-300"
-              value={postText}
-              onChange={(e) => setPostText(e.target.value)}
-            />
+            <div className="relative">
+              <textarea
+                placeholder="What's on your funky mind? 🤪"
+                className="w-full p-4 pr-36 h-24 rounded-xl bg-gray-100 border-2 border-orange-300 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-lg transition-all duration-300"
+                value={postText}
+                onChange={(e) => setPostText(e.target.value)}
+              />
 
-            {/* Generate with AI button */}
-            <button
-              onClick={handleGenerate}
-              className="absolute right-16 bottom-3 p-2 bg-gradient-to-r from-blue-400 to-blue-500 text-white rounded-lg hover:from-blue-500 hover:to-blue-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              Generate with AI
-            </button>
+              {/* Generate with AI button */}
 
-            {/* Send button */}
-            <button
-              type="submit"
-              className="absolute right-3 bottom-3 p-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transform hover:scale-105"
-              disabled={!postText.trim()}
-            >
-              <Send size={24} className="animate-pulse" />
-            </button>
 
-            {/* Emoji picker toggle button */}
-            <button
-              type="button"
-              onClick={() => setShowEmojiPicker((prev) => !prev)}
-              className="absolute left-3 bottom-3 p-2 text-orange-500 rounded-lg hover:bg-gray-200 transition-all duration-300 md:block hidden focus:outline-none focus:ring-2 focus:ring-orange-500"
-            >
-              <Smile size={24} />
-            </button>
+              {/* Send button */}
+              <button
+                type="submit"
+                className="absolute right-3 bottom-3 p-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transform hover:scale-105"
+                disabled={!postText.trim()}
+              >
+                <Send size={24} className="animate-pulse" />
+              </button>
 
-            {/* Show emoji picker below textarea */}
-            {showEmojiPicker && (
-              <div className="absolute left-0 mt-2 z-50 w-64 md:block hidden">
-                <EmojiPicker onEmojiClick={onEmojiClick} />
-              </div>
-            )}
-          </div>
+              {/* Emoji picker toggle button */}
+              <button
+                type="button"
+                onClick={() => setShowEmojiPicker((prev) => !prev)}
+                className="absolute right-16 bottom-3 p-2 bg-gradient-to-r from-pink-500 to-orange-400 text-white rounded-lg hover:bg-gray-200 transition-all duration-300 md:block hidden focus:outline-none focus:ring-2 focus:ring-orange-500"
+              >
+                <Smile size={24} />
+              </button>
+
+              {/* Show emoji picker below textarea */}
+              {showEmojiPicker && (
+                <div className="absolute left-0 mt-2 z-50 w-64 md:block hidden">
+                  <EmojiPicker onEmojiClick={onEmojiClick} />
+                </div>
+              )}
+            </div>
 
 
 
             <div className="flex lg:justify-between justify-center items-center">
+              <div className=" flex gap-3">
               <button
                 type="button"
                 onClick={() => {
                   navigate('/theme');
                 }}
-                className="px-4 py-2 bg-gradient-to-r from-purple-400 to-indigo-500 text-white rounded-full font-semibold text-sm hover:from-purple-500 hover:to-indigo-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 flex items-center space-x-2 transform hover:scale-105 hover:rotate-3"
+                className="px-4 py-2 bg-gradient-to-r from-purple-400 to-indigo-500 text-white rounded-lg font-semibold text-sm hover:from-purple-500 hover:to-indigo-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 flex items-center space-x-2 transform hover:scale-105 hover:rotate-3"
               >
                 <Sparkles size={16} className="animate-spin-slow" />
-                <span>Explore Themes</span>
+                <span className=" text-xs lg:text-base">Explore Themes</span>
               </button>
+              <button
+                onClick={handleGenerate}
+                type="button"
+                className="flex items-center lg:gap-1 gap-0 p-2 bg-gradient-to-r from-blue-400 to-blue-500 text-white rounded-lg hover:from-blue-500 hover:to-blue-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                 <Sparkles size={16} className="animate-spin-slow" />
+                 <span className=" text-xs lg:text-lg"> Generate with AI</span>
+               
+              </button>
+              </div>
               <p className="text-sm text-gray-500 italic animate-bounce hidden lg:block">
                 Share your thoughts with the world!
               </p>
