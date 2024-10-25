@@ -47,7 +47,7 @@ export default function Feed({ searchQuery }: FeedProps) {
   const [newPosts, setNewPosts] = useState<Post[]>([]);
   const [shortNames, setShortNames] = useState<{ [key: string]: string }>({});
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [showCommentEmojiPicker,setShowCommentEmojiPicker]=useState(false);
+  const [showCommentEmojiPicker, setShowCommentEmojiPicker] = useState(false);
 
   const generateAvatarUrl = (seed: string) => {
     return `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`
@@ -90,34 +90,24 @@ export default function Feed({ searchQuery }: FeedProps) {
         const sortedPosts = response.data;
 
         setAllPosts(sortedPosts);
-        setHotPosts(sortedPosts.filter((post:any) => post.likes.length >= 3));
-        
+        setHotPosts(sortedPosts.filter((post: any) => post.likes.length >= 3));
+
         const currentTime = new Date().getTime();
         const oneDayAgo = currentTime - 24 * 60 * 60 * 1000;
-        setNewPosts(sortedPosts.filter((post:any) => new Date(post.createdAt).getTime() >= oneDayAgo));
+        setNewPosts(sortedPosts.filter((post: any) => new Date(post.createdAt).getTime() >= oneDayAgo));
         filterPosts(sortedPosts);
       } catch (err) {
         console.error('Error fetching posts:', err);
       }
     };
-  
+
     fetchPosts();
-  }, [reloadTrigger]); 
+  }, [reloadTrigger]);
 
-  const handleGenerate = async () => {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts/aimessage`);
-      //setPostText(response.data.result);
-      console.log(response.data.result);
-    } catch (error) {
-      console.error("Error generating text:", error);
-    }
-  };
-  
 
-  const filterPosts = (posts:any) => {
+  const filterPosts = (posts: any) => {
     let sortedPosts = [...posts];
-  
+
     if (activeTab === 'hot') {
       sortedPosts = sortedPosts.filter((post) => post.likes.length >= 3);
       sortedPosts.sort((a, b) => b.likes.length - a.likes.length);
@@ -127,12 +117,12 @@ export default function Feed({ searchQuery }: FeedProps) {
       sortedPosts = sortedPosts.filter((post) => new Date(post.createdAt).getTime() >= oneDayAgo);
       sortedPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
-  
-    setPosts(sortedPosts); 
+
+    setPosts(sortedPosts);
   };
-  
+
   useEffect(() => {
-    filterPosts(allPosts); 
+    filterPosts(allPosts);
   }, [activeTab, allPosts]);
 
   useEffect(() => {
@@ -154,7 +144,13 @@ export default function Feed({ searchQuery }: FeedProps) {
         toast.success("Post done Sucessfully", {
           style: { backgroundColor: 'green', color: 'white' }, // Custom inline styles
         });
-      } else {
+      } else if (response.status === 400) {
+          toast.error("Can't post this text ",{
+            style: { backgroundColor: 'reed', color: 'white' }, // Custom inline styles
+          })
+          setPostText('');
+      }
+      else {
         console.log('Failed to create post.')
       }
     } catch (err) {
@@ -200,39 +196,39 @@ export default function Feed({ searchQuery }: FeedProps) {
     setActivePostId((prev: string | null) => (prev === postId ? null : postId))
   }
   const customConfig: Config = {
-    dictionaries: [adjectives,animals],
+    dictionaries: [adjectives, animals],
     separator: '-',
     length: 2,
   };
 
 
   useEffect(() => {
-    
+
     if (filteredPosts.length > 0) {
-      const newNames: { [key: string]: string } = { ...shortNames }; 
-  
+      const newNames: { [key: string]: string } = { ...shortNames };
+
       filteredPosts.forEach((post: any) => {
-       
+
         if (!newNames[post._id]) {
-          newNames[post._id] = uniqueNamesGenerator(customConfig); 
+          newNames[post._id] = uniqueNamesGenerator(customConfig);
         }
-  
+
         post.comments.forEach((comment: any) => {
-         
+
           if (!newNames[comment._id]) {
-            newNames[comment._id] = uniqueNamesGenerator(customConfig); 
+            newNames[comment._id] = uniqueNamesGenerator(customConfig);
           }
         });
       });
       setShortNames(newNames);
     }
-  }, [filteredPosts]); 
+  }, [filteredPosts]);
 
   const onEmojiClick = (emojiObject: any) => {
     setPostText((prevText) => prevText + emojiObject.emoji);
   };
 
-  const onCommentEmojiClick = (emojiObject:any) => {
+  const onCommentEmojiClick = (emojiObject: any) => {
     setCommentText((prevText) => prevText + emojiObject.emoji);
   };
 
@@ -240,65 +236,64 @@ export default function Feed({ searchQuery }: FeedProps) {
     <>
       <main className="lg:w-1/2 w-11/12 space-y-6">
         <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-orange-300 transition-all duration-300 hover:shadow-xl">
-        <form
-          onSubmit={createPost}
-          className="space-y-4"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              createPost(e);
-            }
-          }}
-        >
-          <div className="relative">
-            <textarea
-              placeholder="What's on your funky mind? 🤪"
-              className="w-full p-4 pr-16 h-24 rounded-xl bg-gray-100 border-2 border-orange-300 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-lg transition-all duration-300"
-              value={postText}
-              onChange={(e) => setPostText(e.target.value)}
-            />
-             <button onClick={handleGenerate} className="btn">Generate with AI</button>
-            <button
-              type="submit"
-              className="absolute right-3 bottom-3 p-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transform hover:scale-105"
-              disabled={!postText.trim()}
-            >
-              <Send size={24} className="animate-pulse" />
-            </button>
+          <form
+            onSubmit={createPost}
+            className="space-y-4"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                createPost(e);
+              }
+            }}
+          >
+            <div className="relative">
+              <textarea
+                placeholder="What's on your funky mind? 🤪"
+                className="w-full p-4 pr-16 h-24 rounded-xl bg-gray-100 border-2 border-orange-300 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-lg transition-all duration-300"
+                value={postText}
+                onChange={(e) => setPostText(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="absolute right-3 bottom-3 p-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transform hover:scale-105"
+                disabled={!postText.trim()}
+              >
+                <Send size={24} className="animate-pulse" />
+              </button>
 
-            {/* Emoji picker toggle button */}
-            <button
-              type="button"
-              onClick={() => setShowEmojiPicker((prev) => !prev)}
-              className="absolute left-3 bottom-3 p-2 text-orange-500 rounded-lg hover:bg-gray-200 transition-all duration-300 md:block hidden focus:outline-none focus:ring-2 focus:ring-orange-500"
-            >
-              <Smile size={24} />
-            </button>
+              {/* Emoji picker toggle button */}
+              <button
+                type="button"
+                onClick={() => setShowEmojiPicker((prev) => !prev)}
+                className="absolute left-3 bottom-3 p-2 text-orange-500 rounded-lg hover:bg-gray-200 transition-all duration-300 md:block hidden focus:outline-none focus:ring-2 focus:ring-orange-500"
+              >
+                <Smile size={24} />
+              </button>
 
-            {/* Show emoji picker below textarea */}
-            {showEmojiPicker && (
-              <div className="absolute left-0 mt-2 z-50 w-64 md:block hidden">
-                <EmojiPicker onEmojiClick={onEmojiClick} />
-              </div>
-            )}
-          </div>
+              {/* Show emoji picker below textarea */}
+              {showEmojiPicker && (
+                <div className="absolute left-0 mt-2 z-50 w-64 md:block hidden">
+                  <EmojiPicker onEmojiClick={onEmojiClick} />
+                </div>
+              )}
+            </div>
 
-          <div className="flex lg:justify-between justify-center items-center">
-            <button
-              type="button"
-              onClick={() => {
-                navigate('/theme');
-              }}
-              className="px-4 py-2 bg-gradient-to-r from-purple-400 to-indigo-500 text-white rounded-full font-semibold text-sm hover:from-purple-500 hover:to-indigo-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 flex items-center space-x-2 transform hover:scale-105 hover:rotate-3"
-            >
-              <Sparkles size={16} className="animate-spin-slow" />
-              <span>Explore Themes</span>
-            </button>
-            <p className="text-sm text-gray-500 italic animate-bounce hidden lg:block">
-              Share your thoughts with the world!
-            </p>
-          </div>
-        </form>
+            <div className="flex lg:justify-between justify-center items-center">
+              <button
+                type="button"
+                onClick={() => {
+                  navigate('/theme');
+                }}
+                className="px-4 py-2 bg-gradient-to-r from-purple-400 to-indigo-500 text-white rounded-full font-semibold text-sm hover:from-purple-500 hover:to-indigo-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 flex items-center space-x-2 transform hover:scale-105 hover:rotate-3"
+              >
+                <Sparkles size={16} className="animate-spin-slow" />
+                <span>Explore Themes</span>
+              </button>
+              <p className="text-sm text-gray-500 italic animate-bounce hidden lg:block">
+                Share your thoughts with the world!
+              </p>
+            </div>
+          </form>
 
         </div>
 
@@ -313,7 +308,7 @@ export default function Feed({ searchQuery }: FeedProps) {
 
           filteredPosts.map((post: any) => {
 
-            return (<div key={post._id} className="bg-white rounded-xl shadow-lg p-6 border-2 border-orange-300 transition-all duration-300 hover:shadow-xl transform hover:scale-102">
+            return (<div key={post._id} className="bg-white rounded-xl shadow-lg lg:p-6 p-3 border-2 border-orange-300 transition-all duration-300 hover:shadow-xl transform hover:scale-102">
               <Link to={`/post/${post._id}`}>
                 <div className="flex justify-between items-center mb-4">
                   <div className="flex items-center space-x-3">
@@ -383,8 +378,8 @@ export default function Feed({ searchQuery }: FeedProps) {
               </div>
 
               {activePostId === post._id && (
-                <div className="mt-6 bg-orange-50 rounded-xl p-4">
-                 <div
+                <div className="mt-6 bg-orange-50 rounded-xl lg:p-4 p-2">
+                  <div
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault(); // Prevent adding a new line
@@ -400,7 +395,7 @@ export default function Feed({ searchQuery }: FeedProps) {
                         placeholder="Write a comment..."
                         rows={3}
                       />
-                      
+
                       {/* Emoji picker toggle button */}
                       <button
                         type="button"
@@ -412,10 +407,10 @@ export default function Feed({ searchQuery }: FeedProps) {
 
                       {/* Show emoji picker */}
                       {showCommentEmojiPicker && (
-                        <div className="absolute left-0 bottom-12 mt-2 z-100 w-22 md:block hidden"> 
+                        <div className="absolute left-0 bottom-12 mt-2 z-100 w-22 md:block hidden">
                           <EmojiPicker
                             onEmojiClick={onCommentEmojiClick}
-                            className="w-14" 
+                            className="w-14"
                           />
                         </div>
                       )}
@@ -433,26 +428,28 @@ export default function Feed({ searchQuery }: FeedProps) {
 
                   <div className="mt-6 space-y-4">
                     {post.comments.map((comment: any) => (
-                      <div key={comment._id} className="bg-white rounded-xl p-4 shadow-sm transition-all duration-300 hover:shadow-md">
-                        <div className="flex items-start space-x-3">
+                      <div key={comment._id} className="bg-white flex flex-col  rounded-xl lg:p-4 p-2 shadow-sm transition-all duration-300 hover:shadow-md">
+                        <div className="flex gap-3 items-center justify-start">
                           <img
                             src={generateAvatarUrl(comment._id)}
                             alt="Commenter Avatar"
                             className="w-10 h-10 rounded-full bg-orange-100 border-2 border-orange-300"
                           />
-                          <div >
-                            <h4 className="font-bold text-gray-800">{shortNames[comment._id]}</h4>
-                            <p className="text-sm text-gray-600">{comment.content}</p>
-                            <p className="text-xs text-gray-400 mt-2">
-                              {new Date(comment.createdAt).toLocaleDateString('en-GB')} at{' '}
-                              {new Date(comment.createdAt).toLocaleTimeString('en-GB', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: false,
-                              })}
-                            </p>
-                          </div>
+                          <h4 className="font-bold text-gray-500">{shortNames[comment._id]}</h4>
                         </div>
+                        <div className=" w-full lg:pl-12 p-2 flex flex-col justify-between">
+                          <p className="text-black font-semibold text-xl">{comment.content}</p>
+                          <p className="text-xs text-gray-400 mt-2 flex justify-end  w-full ">
+                            {new Date(comment.createdAt).toLocaleDateString('en-GB')} at{' '}
+                            {new Date(comment.createdAt).toLocaleTimeString('en-GB', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: false,
+                            })}
+                          </p>
+                        </div>
+
+
                       </div>
                     ))}
                   </div>

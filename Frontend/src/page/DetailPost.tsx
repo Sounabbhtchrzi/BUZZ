@@ -140,7 +140,7 @@ const DetailPost = () => {
                 ))}
             </div>
 
-            <div className="container mx-auto p-6 flex flex-col justify-center items-center gap-3 relative z-10">
+            <div className="container mx-auto lg:p-6 p-2 flex flex-col justify-center items-center gap-3 relative z-10">
                 {/* Fixed Navbar */}
                 <div className={`fixed left-0 right-0 z-50 flex justify-center items-center transition-all duration-300 ${isScrolled ? 'top-0' : 'top-6'}`}>
                     <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
@@ -148,10 +148,10 @@ const DetailPost = () => {
 
                 {/* Main feed */}
                 <div className="mt-24 w-full flex flex-col items-center">
-                    <div className=" w-full lg:w-1/2 flex justify-start "><Link to='/' className="text-orange-400 flex justify-between gap-3 font-semibold  rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"><ArrowLeft/> Back to Home </Link>
+                    <div className=" w-full lg:w-1/2 flex justify-start "><Link to='/' className="text-orange-400 flex justify-between gap-3 font-semibold  rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"><ArrowLeft /> Back to Home </Link>
                     </div>
                     {post ? (
-                        <div key={post._id} className="bg-white rounded-lg shadow-lg p-6 border-2 border-orange-300 cursor-pointer w-full lg:w-1/2">
+                        <div key={post._id} className="bg-white rounded-lg shadow-lg lg:p-6 p-3 border-2 border-orange-300 cursor-pointer w-full lg:w-1/2">
                             <div className="flex justify-between items-center mb-4">
                                 <div className="flex items-center space-x-3">
                                     <img
@@ -213,7 +213,7 @@ const DetailPost = () => {
                             </div>
 
 
-                            <div className="mt-6 bg-orange-50 rounded-lg p-4">
+                            <div className="mt-6 bg-orange-50 rounded-lg lg:p-4 p-2">
                                 <textarea
                                     className="w-full p-3 border-2 border-orange-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent transition duration-200"
                                     value={commentText}
@@ -230,28 +230,51 @@ const DetailPost = () => {
 
                                 <div className="mt-6 space-y-4">
                                     {post.comments.map((comment: Comment) => (
-                                        <div key={comment._id} className="bg-white rounded-lg p-4 shadow-sm">
-                                            <div className="flex items-start space-x-3">
+                                        // <div key={comment._id} className="bg-white rounded-lg p-4 shadow-sm">
+                                        //     <div className="flex items-start space-x-3">
+                                        //         <img
+                                        //             src={generateAvatarUrl(comment._id)}// Assuming you have a function to generate the avatar URL
+                                        //             alt="Commenter Avatar"
+                                        //             className="w-8 h-8 rounded-full bg-orange-200"
+                                        //         />
+                                        //         <div className="flex-1">
+                                        //             <p>{generateUniqueName(comment._id)}</p>
+                                        //             <div className="flex w-full justify-between  ">
+                                        //                 <p className="text-gray-600 mt-1 font-semibold">{comment.content}</p>
+                                        //                 <p className="text-xs text-gray-400 mt-2">
+                                        //                     {new Date(comment.createdAt).toLocaleDateString('en-GB')} at{' '}
+                                        //                     {new Date(comment.createdAt).toLocaleTimeString('en-GB', {
+                                        //                         hour: '2-digit',
+                                        //                         minute: '2-digit',
+                                        //                         hour12: false,
+                                        //                     })}
+                                        //                 </p>
+                                        //             </div>
+                                        //         </div>
+                                        //     </div>
+                                        // </div>
+                                        <div key={comment._id} className="bg-white flex flex-col gap-1 rounded-xl lg:p-4 p-2 shadow-sm transition-all duration-300 hover:shadow-md">
+                                            <div className="flex items-center space-x-3 0 justify-start">
                                                 <img
                                                     src={generateAvatarUrl(comment._id)}// Assuming you have a function to generate the avatar URL
                                                     alt="Commenter Avatar"
-                                                    className="w-8 h-8 rounded-full bg-orange-200"
+                                                    className="w-8 h-8 rounded-full border bg-orange-200"
                                                 />
-                                                <div className="flex-1">
-                                                    <p>{generateUniqueName(comment._id)}</p>
-                                                    <div className="flex w-full justify-between  ">
-                                                        <p className="text-gray-600 mt-1 font-semibold">{comment.content}</p>
-                                                        <p className="text-xs text-gray-400 mt-2">
-                                                            {new Date(comment.createdAt).toLocaleDateString('en-GB')} at{' '}
-                                                            {new Date(comment.createdAt).toLocaleTimeString('en-GB', {
-                                                                hour: '2-digit',
-                                                                minute: '2-digit',
-                                                                hour12: false,
-                                                            })}
-                                                        </p>
-                                                    </div>
-                                                </div>
+                                                <h4 className="font-bold text-gray-500">{generateUniqueName(comment._id)}</h4>
                                             </div>
+                                            <div className=" w-full lg:pl-12 p-2 flex flex-col justify-between">
+                                                <p className="text-black font-semibold text-xl">{comment.content}</p>
+                                                <p className="text-xs text-gray-400 mt-2 flex justify-end  w-full ">
+                                                    {new Date(comment.createdAt).toLocaleDateString('en-GB')} at{' '}
+                                                    {new Date(comment.createdAt).toLocaleTimeString('en-GB', {
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                        hour12: false,
+                                                    })}
+                                                </p>
+                                            </div>
+
+
                                         </div>
                                     ))}
                                 </div>
