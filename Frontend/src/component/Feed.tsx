@@ -193,7 +193,7 @@ export default function Feed({ searchQuery }: FeedProps) {
 
       setActivePostId(null)
       setCommentText('')
-      console.log(response.data.message)
+      // console.log(response.data.message)
       toast.info(response.data.message);
       setReloadTrigger(!reloadTrigger)
     } catch (err) {

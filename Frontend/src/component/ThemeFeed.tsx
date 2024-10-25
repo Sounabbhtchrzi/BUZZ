@@ -181,7 +181,11 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
         setReloadTrigger((prev) => !prev);
       }
     } catch (err) {
-      console.error("Error occurred while liking/disliking the theme post:", err);
+      const errorMessage = axios.isAxiosError(err) && err.response?.data?.message ? err.response.data.message : "An error occurred";
+      toast.error(errorMessage, {
+        style: { backgroundColor: '#FF6B6B', color: 'white' },
+      });
+      setPostText('');
     }
   };
 
@@ -194,7 +198,8 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
         { content: commentText },
         { withCredentials: true }
       );
-      console.log(response.data);
+      // console.log(response.data);
+      toast.info(response.data);
       setActivePostId(null);
       setCommentText("");
       setReloadTrigger((prev) => !prev);
