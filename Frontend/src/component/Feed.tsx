@@ -104,15 +104,15 @@ export default function Feed({ searchQuery }: FeedProps) {
     fetchPosts();
   }, [reloadTrigger]); 
 
-  // const handleGenerate = async () => {
-  //   try {
-  //     const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts/aimessage`);
-  //     //setPostText(response.data.result);
-  //     console.log(response.data.result);
-  //   } catch (error) {
-  //     console.error("Error generating text:", error);
-  //   }
-  // };
+  const handleGenerate = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/posts/aimessage`);
+      //setPostText(response.data.result);
+      console.log(response.data.result);
+    } catch (error) {
+      console.error("Error generating text:", error);
+    }
+  };
   
 
   const filterPosts = (posts:any) => {
@@ -257,7 +257,7 @@ export default function Feed({ searchQuery }: FeedProps) {
               value={postText}
               onChange={(e) => setPostText(e.target.value)}
             />
-            {/* <button onClick={handleGenerate} className="btn">Generate with AI</button> */}
+             <button onClick={handleGenerate} className="btn">Generate with AI</button>
             <button
               type="submit"
               className="absolute right-3 bottom-3 p-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transform hover:scale-105"
