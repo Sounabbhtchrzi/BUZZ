@@ -181,7 +181,11 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
         setReloadTrigger((prev) => !prev);
       }
     } catch (err) {
-      console.error("Error occurred while liking/disliking the theme post:", err);
+      const errorMessage = axios.isAxiosError(err) && err.response?.data?.message ? err.response.data.message : "An error occurred";
+      toast.error(errorMessage, {
+        style: { backgroundColor: '#FF6B6B', color: 'white' },
+      });
+      setPostText('');
     }
   };
 
@@ -194,7 +198,8 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
         { content: commentText },
         { withCredentials: true }
       );
-      console.log(response.data);
+      // console.log(response.data);
+      toast.info(response.data);
       setActivePostId(null);
       setCommentText("");
       setReloadTrigger((prev) => !prev);
@@ -255,18 +260,17 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
                 <Send size={24} className="animate-pulse" />
               </button>
 
-              {/* Emoji picker toggle button */}
               <button
                 type="button"
                 onClick={() => setShowEmojiPicker((prev) => !prev)}
-                className="absolute left-3 bottom-3 p-2 text-orange-500 rounded-lg hover:bg-gray-200 transition-all duration-300 md:block hidden focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="absolute right-16 bottom-3 p-2 bg-gradient-to-r from-pink-500 to-orange-400 text-white rounded-lg hover:bg-gray-200 transition-all duration-300 md:block hidden focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <Smile size={24} />
               </button>
 
               {/* Show emoji picker below textarea */}
               {showEmojiPicker && (
-                <div className="absolute left-0 mt-2 z-50 w-64 md:block hidden">
+                <div className="absolute right-20 mt-2 z-50 w-64 md:block hidden">
                   <EmojiPicker onEmojiClick={onEmojiClick} />
                 </div>
               )}
@@ -349,7 +353,9 @@ const ThemeFeed = ({ searchQuery }: ThemeFeedProps) => {
                   className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors"
                   onClick={() => handleCommentClick(post._id)}
                 >
-                  <span className="text-2xl">💬</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
                   <span className="font-bold">{post.comments.length} Comments</span>
                 </button>
               </div>

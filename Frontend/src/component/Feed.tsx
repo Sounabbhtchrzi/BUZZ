@@ -193,7 +193,7 @@ export default function Feed({ searchQuery }: FeedProps) {
 
       setActivePostId(null)
       setCommentText('')
-      console.log(response.data.message)
+      // console.log(response.data.message)
       toast.info(response.data.message);
       setReloadTrigger(!reloadTrigger)
     } catch (err) {
@@ -258,7 +258,7 @@ export default function Feed({ searchQuery }: FeedProps) {
             <div className="relative">
               <textarea
                 placeholder="What's on your funky mind? 🤪"
-                className="w-full p-4 pr-36 h-24 rounded-xl bg-gray-100 border-2 border-orange-300 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-lg transition-all duration-300"
+                className="w-full p-4 lg:pr-36 pr-5  h-24 rounded-xl bg-gray-100 border-2 border-orange-300 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-lg transition-all duration-300"
                 value={postText}
                 onChange={(e) => setPostText(e.target.value)}
               />
@@ -286,7 +286,7 @@ export default function Feed({ searchQuery }: FeedProps) {
 
               {/* Show emoji picker below textarea */}
               {showEmojiPicker && (
-                <div className="absolute left-0 mt-2 z-50 w-64 md:block hidden">
+                <div className="absolute right-20 mt-2 z-50 w-64 md:block hidden">
                   <EmojiPicker onEmojiClick={onEmojiClick} />
                 </div>
               )}
@@ -309,7 +309,7 @@ export default function Feed({ searchQuery }: FeedProps) {
               <button
                 onClick={handleGenerate}
                 type="button"
-                className="flex items-center lg:gap-1 gap-0 p-2 bg-gradient-to-r from-blue-400 to-blue-500 text-white rounded-lg hover:from-blue-500 hover:to-blue-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex items-center lg:gap-1 gap-1 p-2 bg-gradient-to-r from-blue-400 to-blue-500 text-white rounded-lg hover:from-blue-500 hover:to-blue-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                  <Sparkles size={16} className="animate-spin-slow" />
                  <span className=" text-xs lg:text-lg"> Generate with AI</span>
